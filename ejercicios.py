@@ -157,3 +157,66 @@ for i in range(7):
 for i in range(n + 1):
     for j in range(i + 1):
         print(i, j)
+        
+# Ejercicio 3.1
+        
+def a_segundos(h, m, s):
+    S = 3600 * h + 60 * m + s
+    return S
+
+def a_hms(S):
+    h = S // 3600
+    m = (S - h * 3600) // 60
+    s = S - h * 3600 - m * 60
+    return h, m, s
+
+# Ejercicio 3.2
+    
+h1 = int(input('Cantidad de horas del primer intervalo:'))
+m1 = int(input('Cantidad de minutos del primer intervalo:'))
+s1 = int(input('Cantidad de segundos del primer intervalo:'))
+
+h2 = int(input('Cantidad de horas del segundo intervalo:'))
+m2 = int(input('Cantidad de minutos del segundo intervalo:'))
+s2 = int(input('Cantidad de segundos del segundo intervalo:'))
+
+H, M, S = a_hms(a_segundos(h1, m1, s1) + a_segundos(h2, m2, s2))
+print('La suma de los intervalos es igual a ' + str(H) + ' horas, ' + str(M) + ' minutos y ' + str(S) + ' segundos.')
+
+# Ejercicio 3.3, se puede hacer mejor? sin hacer todos los productos a mano? por ej como lo generalizaria si en vez de 4 son n numeros con n grande
+
+def mayor_producto(n1, n2, n3, n4):
+    prod = n1 * n2
+    prod = max(prod, n1 * n3)
+    prod = max(prod, n1 * n4)
+    prod = max(prod, n2 * n3)
+    prod = max(prod, n2 * n4)
+    prod = max(prod, n3 * n4)
+    return prod
+
+# Ejercicio 3.4
+    
+def norma(x, y, z):
+    return (x ** 2 + y ** 2 + z ** 2) ** 0.5
+
+def diferencia(x1, y1, z1, x2, y2, z2):
+    dx = x1 - x2
+    dy = y1 - y2
+    dz = z1 - z2
+    return dx, dy, dz
+
+def producto_vec(x1, y1, z1, x2, y2, z2):
+    pv1 = y1 * z2 - z1 * y2
+    pv2 = z1 * x2 - x1 * z2
+    pv3 = x1 * y2 - y1 * x2
+    return pv1, pv2, pv3
+
+def area_triangulo(x1, y1, z1, x2, y2, z2, x3, y3, z3):
+    ABx, ABy, ABz = diferencia(x1, y1, z1, x2, y2, z2)
+    BCx, BCy, BCz = diferencia(x2, y2, z2, x3, y3, z3)
+    pv1, pv2, pv3 = producto_vec(ABx, ABy, ABz, BCx, BCy, BCz)
+    area = norma(pv1, pv2, pv3) / 2
+    return area
+
+#def area_cuadrilatero(x1, y1, x2, y2, x3, y3, x4, y4): # no se como hacerlo... preguntar
+    
