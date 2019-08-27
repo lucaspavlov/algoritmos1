@@ -95,3 +95,65 @@ def imprimir_n_veces(palabra, n):
 
 #palabra = input('Escriba una palabra: ')
 #imprimir_n_veces(palabra, 1000)
+        
+# Ejercicio 2.1
+        
+def capital_final(capital_inicial,tasa,anios):
+    capital_final = capital_inicial * (1 + tasa / 100) ** anios
+    return capital_final
+
+capital_inicial = float(input('Capital inicial? '))
+tasa = float(input('Tasa de interes? '))
+anios = float(input('Cuántos años? '))
+print('Capital final = ' + str(capital_final(capital_inicial, tasa, anios)))
+
+# Ejercicio 2.2
+
+def farenheit_a_celsius(F):
+    C = 5 / 9 * (F -32)
+    return C
+
+# farenheit = 32
+# celsius = farenheit_a_celsius(farenheit)
+    
+# Ejercicio 2.3
+print('Farenheit', 'Celsius')
+for i in range(13):
+    F = 10 * i
+    print(F, farenheit_a_celsius(F))
+    
+# Ejercicio 2.4
+n1 = int(input('Ingrese un numero natural: ')) # asumo que es entero
+n2 = int(input('Ingrese otro numero natural: ')) # asumo que es entero
+
+for n in range(n1, n2 + 1):
+    if n % 2 == 0:
+        print(n)
+        
+# Ejercicio 2.5 - numeros triangulares
+        
+n = int(input('Ingrese un número natural: '))
+N = 0
+for i in range(1, n + 1):
+    N = N + i
+    print(i, N)
+
+# usando la formula de Gauss. Esta tiene mas operaciones (la otra con una en cada iteracion funciona, obviamente usando el resultado de la anterior)
+for i in range(1, n + 1):
+    print(i, i*(i+1)/2)
+    
+# Ejercicio 2.6
+# n = input('A cuántos números quiere tomarle el factorial?')
+# como hacerlo? como acumulo los numeros? (quiero preguntar todos los numeros y luego imprimir todos los factoriales)
+    
+# Ejercicio 2.7 - domino
+#c = 0
+for i in range(7):
+    for j in range(i + 1):
+        print(i, j)
+        c += 1 # al final debe dar 28, la cantidad de fichas del domino
+        
+# Ejercicio 2.8 , simplemente cambiar 7 por n + 1 con n la cantidad de numeros
+for i in range(n + 1):
+    for j in range(i + 1):
+        print(i, j)
