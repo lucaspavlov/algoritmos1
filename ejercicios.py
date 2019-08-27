@@ -220,3 +220,37 @@ def area_triangulo(x1, y1, z1, x2, y2, z2, x3, y3, z3):
 
 #def area_cuadrilatero(x1, y1, x2, y2, x3, y3, x4, y4): # no se como hacerlo... preguntar
     
+# Ejercicio 4.1a
+    
+def es_par(n):
+    if n % 2 == 0:
+        return True
+    else:
+        return False
+    
+def es_primo(n):
+    if es_par(n):
+        return False
+    elif n == 1:
+        return False
+    else:
+        N = int((n - 1) / 2) # voy a probar dividiendo a n por todos los impares hasta este numero, ya que mas alla de ese numero no tiene sentido porque es mas grande que la mitad de n
+        for i in range(3, N + 1):
+            if not es_par(i): # solamente me fijo en los impares (mayores a 1), porque en esta parte ya se que n es impar
+                if n % i == 0:
+                    return False # si para algun impar la division de n por i tiene resto cero, es decir n es divisible por i, entonces el numero no es primo ya que tiene un divisor impar mayor a 1. En ese caso devuelvo False ya que el numero no es primo, y salgo de la iteracion y de la funcion
+        return True # si llegue hasta aca es porque n no tiene ningun divisor impar mayor a 1, es decir, n es primo
+   
+# Ejercicio 4.2
+    
+def abs_propia(x):
+    if x >= 0:
+        return x
+    else:
+        return -x
+    
+# Ejercicio 4.3, preguntar    
+    
+#def imprimir_matriz_identidad(n):
+#    for i in range(n):
+        
