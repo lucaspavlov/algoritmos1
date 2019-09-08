@@ -249,8 +249,192 @@ def abs_propia(x):
     else:
         return -x
     
-# Ejercicio 4.3, preguntar    
+# Ejercicio 4.3   
     
-#def imprimir_matriz_identidad(n):
-#    for i in range(n):
+def imprimir_matriz_identidad(n):
+    ''' Funcion que, dado un entero n especificado como input, imprime la matriz identidad de dimensión n'''
+    for i in range(1, n+1):
+        line = ''
+        for j in range(1, n+1):
+            if i == j:
+                line = line + '1 '
+            else:
+                line = line + '0 '
+        print(line[:-1]) # el :-1 es solo para que no imprima el ultimo espacio, si uso solo print(line) igual imprime la matriz identidad pero con un espacio despues del ultimo digito
+                
         
+    
+# Ejercicio 4.4a
+def maxomin_polgrado2(a,b,c):
+    ''' Encuentra el máximo o mínimo de un polinomio de grado 2, a*x^2+b*x+c, e indica si es máximo o mínimo'''
+    if a > 0:
+       maxomin = 'es mínimo'
+    elif a < 0:
+        maxomin = 'es máximo'
+    else:
+        print('El primer coeficiente no puede ser cero.')
+        return
+    
+    maxomin_valor = - b / 2 / a
+    return maxomin_valor, maxomin
+
+# Ejercicio 4.4b
+def raices(a,b,c):
+    ''' Devuelve las raices, reales o complejas, de un polinomio de grado 2, a*x^2+b*x+c'''
+    if a == 0:
+        print('El primer coeficiente no puede ser cero')
+        return
+    if b ** 2 - 4 * a * c < 0:
+        raiz1 = (- b + (4 * a * c - b ** 2)**0.5 * complex(0,1)) / 2 / a
+        raiz2 = (- b - (4 * a * c - b ** 2)**0.5 * complex(0,1)) / 2 / a
+    else:
+        raiz1 = (- b + (b ** 2 - 4 * a * c) ** 0.5) / 2 / a
+        raiz2 = (- b - (b ** 2 - 4 * a * c) ** 0.5) / 2 / a
+    return raiz1, raiz2
+
+# Ejercicio 4.4c
+def interseccion_rectas(m1,b1,m2,b2):
+    ''' Devuelve la intersección de dos rectas, dadas por y = m1*x+b1 y por y = m2*x+b2, como coordenadas (x,y)'''
+    if m1 == m2:
+        print('Las rectas tienen la misma pendiente')
+        return
+    x_interseccion = (b2 - b1) / (m1 - m2)
+    y_interseccion = m1 * x_interseccion + b1
+    return x_interseccion, y_interseccion
+
+# Ejercicio 4.5a
+def es_bisiesto(anio):
+    '''Funcion que devuelve True si un año es bisiesto o False si no lo es'''
+    if anio % 4 == 0:
+        if anio % 400 == 0:
+            return True
+        if anio % 100 == 0:
+            return False
+        return True
+    return False
+
+# Ejercicio 4.5b
+def cantidad_dias(mes,anio):
+    '''Dado un mes y un año, devuelve la cantidad de dias que tiene ese mes'''
+    if mes == 2:
+        if es_bisiesto(anio):
+            return 29
+        else:
+            return 28
+    if mes == 1 or mes == 3 or mes == 5 or mes == 7 or mes == 8 or mes == 10 or mes == 12:
+        return 31
+    else:
+        return 30
+
+def es_valida(dia, mes, anio):
+    '''Dada una fecha, devuelve True si es válida o False si no lo es'''
+    if dia % 1 != 0 or mes % 1 != 0 or anio % 1 != 0:
+        return False # dias, meses o años no pueden no ser enteros
+    if dia <= 0 or dia > 31 or mes <=0 or mes > 12:
+        return False # dias y meses deben ser positivos y estar entre 1 y 31 o entre 1 y 12 respectivamente
+    if mes == 2:
+        if dia > 29:
+            return False
+        if es_bisiesto(anio):
+            return True
+        elif dia != 29:
+            return True
+    else:
+        if mes == 1 or mes == 3 or mes == 5 or mes == 7 or mes == 8 or mes == 10 or mes == 12:
+            return True
+        elif dia != 31:
+            return True
+    return False
+
+def dias_hasta_fin_de_mes(dia, mes, anio):
+    '''Dado un día, mes y año, devuelve la cantidad de días que faltan hasta fin de mes'''
+    if not es_valida(dia, mes, anio):
+        print('Fecha no válida')
+        return
+    return cantidad_dias(mes, anio) - dia
+
+def dias_hasta_fin_de_anio(dia, mes, anio):
+    '''Dado un día, mes y año, devuelve la cantidad de días que faltan hasta fin de año'''
+    if not es_valida(dia, mes, anio):
+        print('Fecha no válida')
+        return
+    dias_hasta_fin_de_anio = dias_hasta_fin_de_mes(dia, mes, anio)
+    for m in range(mes + 1, 13):
+        dias_hasta_fin_de_anio += cantidad_dias(m, anio)
+    return dias_hasta_fin_de_anio
+
+def dias_transcurridos_en_el_anio(dia, mes, anio):
+    '''Dado un dia, mes y año, devuelve la cantidad de dias que pasaron en ese año'''
+    if not es_valida(dia, mes, anio):
+        print('Fecha no válida')
+        return
+    if es_bisiesto(anio):
+        return 366 - dias_hasta_fin_de_anio(dia, mes, anio)
+    else:
+        return 365 - dias_hasta_fin_de_anio(dia, mes, anio)
+
+def anios_meses_y_dias_transcurridos(dia1, mes1, anio1, dia2, mes2, anio2): # asume que dia1, mes1, anio1 es anterior a dia2, mes2, anio2
+    '''Dados dos días, expresados como (día, mes, año), devuelve la cantidad de días, meses y años entre ambos'''
+    if not es_valida(dia1, mes1, anio1) or not es_valida(dia2, mes2, anio2):
+        print('Fecha no válida')
+        return
+    dias_hasta_fin_de_anio1 = dias_hasta_fin_de_anio(dia1, mes1, anio1)
+    dias_transcurridos_en_el_anio2 = dias_transcurridos_en_el_anio(dia2, mes2, anio2)
+    dias_totales = dias_hasta_fin_de_anio1 + dias_transcurridos_en_el_anio2
+    for anio in range(anio1 + 1, anio2):
+        if es_bisiesto(anio):
+            dias_totales = dias_totales + 366
+        else:
+            dias_totales = dias_totales + 365
+    anios = dias_totales // 365
+    meses = (dias_totales - anios * 365) // 30
+    dias = dias_totales - anios * 365 - meses * 30
+    return anios, meses, dias
+
+# Ejercicio 4.6
+def nombre_del_dia(dia_del_anio):
+    '''Dado un número de día de un año (entre 1 y 366), devuelve de qué día se trata asumiendo que el 1 de enero fue lunes'''
+    if dia_del_anio % 1 != 0 or dia_del_anio < 1 or dia_del_anio > 366:
+        print('Dia incorrecto, debe ser un entero entre 1 y 366')
+        return
+    d = dia_del_anio % 7
+    if d == 1:
+        return 'lunes'
+    if d == 2:
+        return 'martes'
+    if d == 3:
+        return 'miércoles'
+    if d == 4:
+        return 'jueves'
+    if d == 5:
+        return 'viernes'
+    if d == 6:
+        return 'sábado'
+    if d == 0:
+        return 'domingo'
+
+# Ejercicio 4.8
+def signo(dia, mes):
+    if mes == 1:
+        if dia > 0 and dia < 21:
+            signo = 'capricornio'
+        elif dia < 32:
+            signo = 'acuario'
+        else:
+            print('Fecha incorrecta')
+            return
+    if mes == 2:
+        if dia > 0 and dia < 20:
+            signo = 'acuario'
+        elif dia < 30:
+            signo = 'piscis'
+        else:
+            print('Fecha incorrecta')
+            return
+    return signo
+    # y asi sucesivamente... hay otra forma?
+
+dia = int(input('Ingrese el día de su cumpleaños: '))
+mes = int(input('Ingrese el mes de su cumpleaños: '))
+sgn = signo(dia, mes)
+print(sgn)
