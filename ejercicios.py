@@ -414,27 +414,74 @@ def nombre_del_dia(dia_del_anio):
         return 'domingo'
 
 # Ejercicio 4.8
-def signo(dia, mes):
+def signo_zodiacal(dia, mes):
+    if not es_valida(dia, mes, 2000):
+        print('Fecha no valida')
+        return
     if mes == 1:
-        if dia > 0 and dia < 21:
+        if dia < 21:
             signo = 'capricornio'
-        elif dia < 32:
+        else:
+            signo = 'acuario'
+    if mes == 2:
+        if dia < 20:
             signo = 'acuario'
         else:
-            print('Fecha incorrecta')
-            return
-    if mes == 2:
-        if dia > 0 and dia < 20:
-            signo = 'acuario'
-        elif dia < 30:
+            signo = 'piscis'
+    if mes == 3:
+        if dia < 21:
             signo = 'piscis'
         else:
-            print('Fecha incorrecta')
-            return
+            signo = 'aries'
+    if mes == 4:
+        if dia < 21:
+            signo = 'aries'
+        else:
+            signo = 'tauro'
+    if mes == 5:
+        if dia < 21:
+            signo = 'tauro'
+        else:
+            signo = 'geminis'
+    if mes == 6:
+        if dia < 22:
+            signo = 'geminis'
+        else:
+            signo = 'cancer'
+    if mes == 7:
+        if dia < 24:
+            signo = 'cancer'
+        else:
+            signo = 'leo'
+    if mes == 8:
+        if dia < 24:
+            signo = 'leo'
+        else:
+            signo = 'virgo'
+    if mes == 9:
+        if dia < 24:
+            signo = 'virgo'
+        else:
+            signo = 'libra'
+    if mes == 10:
+        if dia < 23:
+            signo = 'libra'
+        else:
+            signo = 'escorpio'
+    if mes == 11:
+        if dia < 22:
+            signo = 'escorpio'
+        else:
+            signo = 'sagitario'
+    if mes == 12:
+        if dia < 22:
+            signo = 'sagitario'
+        else:
+            signo = 'capricornio'
     return signo
-    # y asi sucesivamente... hay otra forma?
 
-dia = int(input('Ingrese el día de su cumpleaños: '))
-mes = int(input('Ingrese el mes de su cumpleaños: '))
-sgn = signo(dia, mes)
+ddmm = input('Ingrese el día y mes de su cumpleaños [en formato dd/mm]: ')
+dia = int(ddmm[0:2])
+mes = int(ddmm[3:5])
+sgn = signo_zodiacal(dia, mes)
 print(sgn)
