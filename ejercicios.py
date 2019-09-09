@@ -485,3 +485,179 @@ dia = int(ddmm[0:2])
 mes = int(ddmm[3:5])
 sgn = signo_zodiacal(dia, mes)
 print(sgn)
+            
+
+# Ejercicio 5.1
+quiere_seguir_ingresando = 'Si'
+suma_notas = 0
+cantidad_notas = 0
+while quiere_seguir_ingresando == 'Si':
+    suma_notas += float(input('Ingrese una nota: '))
+    cantidad_notas += 1
+    quiere_seguir_ingresando = input('Quiere seguir ingresando notas? [Si/No] ')
+print('El promedio es ' + str(suma_notas / cantidad_notas))
+
+
+# Ejercicio 5.2
+def descomposicion_en_primos(n):
+    '''Funcion que recibe por argumento un entero n e imprime su descomposicion en numeros primos (no devuelve nada)'''
+    factor = n
+    divisor = 2
+    while factor != 1:
+        if factor % divisor == 0:
+            print(divisor)
+            factor = factor / divisor
+        else:
+            divisor += 1
+
+# Ejercicio 5.3a
+            
+CONTRASENIA = 'pincha'
+intento = ''
+
+while intento != CONTRASENIA:
+    intento = input('Ingrese la contrasenia: ')
+    if intento != CONTRASENIA:
+        print('Contrasenia incorrecta, intente nuevamente')
+        
+# Ejercicio 5.3b
+        
+CONTRASENIA = 'pincha'
+intento = ''
+num_max_intentos = 5
+num_intentos = 0
+
+while intento != CONTRASENIA and num_intentos < num_max_intentos:
+    intento = input('Ingrese la contrasenia: ')
+    if intento != CONTRASENIA:
+        print('Contrasenia incorrecta, intente nuevamente')
+        num_intentos += 1
+        if num_intentos == num_max_intentos:
+            print('Número máximo de intentos alcanzados')
+
+# Ejercicio 5.3c
+        
+import time
+CONTRASENIA = 'pincha'
+intento = ''
+num_max_intentos = 5
+num_intentos = 0
+
+while intento != CONTRASENIA and num_intentos < num_max_intentos:
+    intento = input('Ingrese la contrasenia: ')
+    if intento != CONTRASENIA:
+        print('Contrasenia incorrecta, intente nuevamente')
+        num_intentos += 1
+        if num_intentos == num_max_intentos:
+            print('Número máximo de intentos alcanzados')
+        time.sleep(num_intentos)
+
+
+# Ejercicio 5.3d # preguntar si se espera que en el programa aparezca el ciclo while (dado que debe devolver True o False imagino que no)
+def contrasenia_correcta():
+    CONTRASENIA = 'pincha'
+    intento = input('Ingrese la contrasenia: ')
+    if intento != CONTRASENIA:
+        return False
+    else:
+        return True
+
+# Ejercicio 5.4
+import random
+N = 100 # numero maximo a generar
+num = random.randrange(1, N + 1)
+numero_ingresado = -1
+while numero_ingresado != num:
+    numero_ingresado = int(input('Ingrese un número: '))
+    if numero_ingresado == num:
+        print('Bingo!')
+    elif numero_ingresado < num:
+        print('El número ingresado es menor al número secreto')
+    else:
+        print('El número ingresado es mayor al número secreto')
+
+# Ejercicio 5.5
+def mcd_euclides(num1, num2):
+    num_max = max(num1, num2)
+    num_min = min(num1, num2)
+    resto = 1
+    while resto != 0:
+        resto = num_max % num_min
+        num_max = num_min
+        num_min = resto
+    return num_max
+
+# Ejercicio 5.6
+def es_potencia_de_dos(n):
+    if n < 2:
+        return False
+    elif int(n**0.5) == n**0.5 or n == 2:
+        return True
+    else:
+        return False
+
+def suma_de_potencias_de_dos(num1, num2):
+    num_min = min(num1, num2)
+    num_max = max(num1, num2)
+    sum_pot2 = 0
+    for i in range(num_min, num_max+1):
+        if es_potencia_de_dos(i):
+            sum_pot2 = sum_pot2 + i
+    return sum_pot2
+
+# Ejercicio 5.7a - en realidad NO es esto lo que se pide, me equivoque
+def divisores(n):
+    lista_divisores = [] # se puede hacer sin listas?
+    for i in range(1, n):
+        if n % i == 0:
+            lista_divisores.append(i)
+    return lista_divisores
+
+# Ejercicio 5.7a
+def suma_divisores(n):
+    '''Dado un número n, devuelve la suma de todos los divisores, excepto el mismo'''
+    sum_div = 0
+    for i in range(1, n):
+        if n % i == 0:
+            sum_div += i
+    return sum_div
+
+# Ejercicio 5.7b
+def primeros_numeros_perfectos(m):
+    '''Imprime los primeros m numeros perfectos, definidos como los números cuya suma de divisores es igual a el numero mismo'''
+    np = 0
+    i = 1
+    while np < m:
+        if suma_divisores(i) == i:
+            print(i)
+            np += 1
+        i += 1
+
+# Ejercicio 5.7c
+def primeros_numeros_amigos(m):
+    '''Imprime los primeros m numeros amigos'''
+    np = 0
+    i = 1
+    j = 1
+    while np < m:
+        for j in range(1, i):
+            if suma_divisores(i) == j and suma_divisores(j) == i:
+                print(i, j)
+                np += 1
+        i += 1
+        
+# Ejercicio 5.7d, preguntar...
+def primeros_numeros_amigos_masrapida(m):
+    '''Imprime los primeros m numeros amigos'''
+    np = 0
+    i = 1
+    j = 1
+    while np < m:
+        for j in range(1, i):
+            j2 = i - j
+            if suma_divisores(i) == j2 and suma_divisores(j2) == i:
+                print(i, j2)
+                np += 1
+        i += 1
+            
+        
