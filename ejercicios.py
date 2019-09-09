@@ -659,5 +659,64 @@ def primeros_numeros_amigos_masrapida(m):
                 print(i, j2)
                 np += 1
         i += 1
-            
+
+# Ejercicio 5.8
+n = 0
+suma = 0
+cantidad_de_numeros_ingresados = 0
+while n != -1:
+    n = int(input('Ingrese un número natural (-1 para terminar): '))
+    if n > 0:
+        suma += n
+        cantidad_de_numeros_ingresados += 1
+    elif n != -1:
+        print('El número debe ser natural.')
+print('Se ingresaron ' + str(cantidad_de_numeros_ingresados) + ' numeros, cuya suma da ' + str(suma) + ' y, por lo tanto, el promedio de los mismos es ' + str(suma / cantidad_de_numeros_ingresados))
+
+# Ejercicio 5.9a
+def multiplos_menores_que_numero_confor(n1, n2):
+    '''Dados dos numeros n1 y n2, devuelve la cantidad de multiplos de n1 que son menores que n2'''
+    cantidad_de_multiplos_menores = 0
+    for i in range(n1, n2):
+        if i % n1 == 0:
+            cantidad_de_multiplos_menores += 1
+    return cantidad_de_multiplos_menores
+
+# Ejercicio 5.9b
+def multiplos_menores_que_numero_conwhile(n1, n2):
+    '''Dados dos numeros n1 y n2, devuelve la cantidad de multiplos de n1 que son menores que n2'''
+    cantidad_de_multiplos_menores = 0
+    n = n1
+    while n < n2:
+        cantidad_de_multiplos_menores += 1
+        n = (cantidad_de_multiplos_menores + 1) * n1
         
+    return cantidad_de_multiplos_menores
+
+# Ejercicio 5.10
+def imprime_primos_hasta(n):
+    '''Imprime todos los numeros primos hasta n'''
+    for i in range(1, n+1):
+        if es_primo(i):
+            print(i)
+
+# Ejercicio 5.11, no entendi el enunciado, preguntar
+            
+# Ejercicio 5.12
+
+def aprobo_o_no(cantidad_ejercicios_examen,porcentaje_necesario):
+    cantidad_de_ejercicios_resueltos = 0 # va a ser el centinela
+    while cantidad_de_ejercicios_resueltos >= 0:
+        cantidad_de_ejercicios_resueltos = int(input('Ingrese la cantidad de ejercicios resueltos correctamente (o un numero negativo si no hay mas examenes a corregir): '))
+        if cantidad_de_ejercicios_resueltos >= 0 and cantidad_de_ejercicios_resueltos <= cantidad_ejercicios_examen:
+            porcentaje_OK = cantidad_de_ejercicios_resueltos / cantidad_ejercicios_examen * 100
+            porcentaje_OK_str = str(porcentaje_OK)
+            porcentaje_OK_str_redondeado = porcentaje_OK_str[0:5]
+            print('El alumno resolvio correctamente el ' + porcentaje_OK_str_redondeado + '% del examen')
+            if porcentaje_OK >= porcentaje_necesario:
+                print('El alumno aprobo')
+            else:
+                print('El alumno no aprobo')
+        elif cantidad_de_ejercicios_resueltos > cantidad_ejercicios_examen:
+            print('Cantidad de ejercicios incorrecta, o el alumno resolvio correctamente mas ejercicios que los que tenia el examen (neeeerd)')
+            
