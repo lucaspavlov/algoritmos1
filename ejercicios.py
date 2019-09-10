@@ -720,3 +720,220 @@ def aprobo_o_no(cantidad_ejercicios_examen,porcentaje_necesario):
         elif cantidad_de_ejercicios_resueltos > cantidad_ejercicios_examen:
             print('Cantidad de ejercicios incorrecta, o el alumno resolvio correctamente mas ejercicios que los que tenia el examen (neeeerd)')
             
+# Ejercicio 6.1
+
+def imprime_dos_primeros_caracteres(s):
+    print(s[:2])
+    
+def imprime_tres_ultimos_caracteres(s):
+    print(s[-3:])
+
+def imprime_cada_dos_caracteres(s):
+    print(s[0:len(s)+1:2])
+    
+def imprime_en_sentido_inverso(s):
+    print(s[::-1])
+    
+def imprime_normal_e_inverso(s):
+    print(s + s[::-1])
+    
+def intercala_caracter(s, c):
+    sc = ''
+    for i in s:
+        sc += i
+        sc += c
+    return sc
+
+# Ejercicio 6.2
+
+def reemplaza_espacios(s, c):
+    '''Reemplaza todos los espacios en la cadena s por el caracter c'''
+    sc = ''
+    for i in s:
+        if i == ' ':
+            sc += c
+        else:
+            sc += i
+    return sc
+    
+def reemplaza_digitos(s, c):
+    '''Reemplaza todos los digitos en la cadena s por el caracter c'''
+    sc = ''
+    for i in s:
+        if i in '0123456789':
+            sc += c
+        else:
+            sc += i
+    return sc
+
+def inserta_cada_tres_digitos(s, c):
+    sc = ''
+    contador_digitos = 0
+    for i in s:
+        if i in '0123456789': # no queda claro si se pide esto. por el ejemplo pareciera que s quizas consista solamente de digitos
+            contador_digitos += 1
+            sc += i
+            if contador_digitos % 3 == 0:
+                sc += c
+        else:
+            sc += i
+    return sc
+
+# Ejercicio 6.3
+    
+def intercala_caracter_con_limite(s, c, lim):
+    sc = ''
+    veces_intercalado = 0
+    for i in s:
+        sc += i
+        if veces_intercalado < lim:
+            sc += c
+            veces_intercalado += 1
+    return sc
+
+def reemplaza_espacios_con_limite(s, c, lim):
+    '''Reemplaza todos los espacios en la cadena s por el caracter c, hasta un máximo de lim reemplazos'''
+    sc = ''
+    cantidad_de_reemplazos = 0
+    for i in s:
+        if i == ' ' and cantidad_de_reemplazos < lim:
+            sc += c
+            cantidad_de_reemplazos += 1
+        else:
+            sc += i
+    return sc
+    
+def reemplaza_digitos_con_limite(s, c, lim):
+    '''Reemplaza todos los digitos en la cadena s por el caracter c, hasta un máximo de lim reemplazos'''
+    sc = ''
+    cantidad_de_reemplazos = 0
+    for i in s:
+        if i in '0123456789' and cantidad_de_reemplazos < lim:
+            sc += c
+            cantidad_de_reemplazos += 1
+        else:
+            sc += i
+    return sc
+
+def inserta_cada_tres_digitos_con_limite(s, c, lim):
+    sc = ''
+    contador_digitos = 0
+    cantidad_de_inserciones = 0
+    for i in s:
+        if i in '0123456789': # no queda claro si se pide esto. por el ejemplo pareciera que s quizas consista solamente de digitos
+            contador_digitos += 1
+            sc += i
+            if contador_digitos % 3 == 0 and cantidad_de_inserciones < lim:
+                sc += c
+                cantidad_de_inserciones += 1
+        else:
+            sc += i
+    return sc
+
+def agregar_separadores_de_miles(n):
+    N = '' # va a contener al número con separadores 
+    n = n[::-1] # doy vuelta el numero
+    contador_posiciones = 0
+    for c in n:
+        N += c
+        contador_posiciones += 1
+        if contador_posiciones % 3 == 0 and contador_posiciones < len(n):
+            N += '.'
+    return N[::-1]
+
+# Ejercicio 6.5a
+
+def primera_letra_de_cada_palabra(s):
+    if s == '':
+        return s
+    if s[0] != ' ': # si empieza por algo distinto de espacio, la respusta empieza por ese caracter
+        primeras_letras = s[0]
+    else:
+        primeras_letras = '' # si empieza por espacio, la respuesta no va a empezar por espacio
+    
+    for i in range(len(s)):
+        if s[i] == ' ' and i < len(s) - 1:
+            primeras_letras += s[i + 1]
+    
+    return primeras_letras
+
+# Ejercicio 6.5b
+
+def mayusculas_en_cada_palabra(s):
+    S = ''
+    if s == '':
+        return s
+    S += s[0].upper()
+    for i in range(1,len(s)):
+        if s[i-1] == ' ':
+            S += s[i].upper()
+        else:
+            S += s[i]
+    return S
+
+# Ejercicio 6.5c
+
+def solo_palabras_que_empiecen_con(s, primera_letra):
+    frase = ''
+    palabra = ''
+    for i in range(len(s)):
+        if s[i] == ' ':
+            if palabra[0] == primera_letra.lower() or palabra[0] == primera_letra.upper():
+                frase = frase + palabra + ' '
+                palabra = ''
+        elif i == len(s) - 1:
+            if palabra[0] == primera_letra.lower() or palabra[0] == primera_letra.upper():
+                frase = frase + palabra + s[i]
+        else:
+            palabra += s[i]
+    if frase[-1:] == ' ':
+        frase = frase[:-1]
+
+    return frase
+        
+
+# Ejercicio 6.6
+    
+def solo_consonantes(s):
+    s_consonantes = ''
+    vocales = 'aeiouAEIOU'
+    for c in s:
+        if c not in vocales:
+            s_consonantes += c
+    return s_consonantes
+
+    
+def solo_vocales(s):
+    s_vocales = ''
+    vocales = 'aeiouAEIOU '
+    for c in s:
+        if c in vocales:
+            s_vocales += c
+    return s_vocales
+
+def reemplaza_vocales(s):
+    s_vocalesreemplazadas = ''
+    #vocales_minuscula = ('a', 'e', 'i', 'o', 'u', 'a')
+    #vocales_mayuscula = ('A', 'E', 'I', 'O', 'U', 'A')
+    vocales = 'aeiouaAEIOUA'
+    for c in s:
+        if c not in vocales:
+            s_vocalesreemplazadas += c
+        else:
+            cont = 0
+            while cont < 11:
+                if c == vocales[cont]:
+                    s_vocalesreemplazadas += vocales[cont + 1]
+                    break
+                else:
+                    cont += 1
+    return s_vocalesreemplazadas
+
+def es_palindromo(s):
+    s_sinespacios = ''
+    for c in s:
+        if c != ' ':
+            s_sinespacios += c
+    if s_sinespacios == s_sinespacios[::-1]:
+        return True # asi como está es case-sensitive, o sea devolvería False para 'Anita lava la tina' y True para 'anita lava la tina'
+    return False
