@@ -607,7 +607,7 @@ def suma_de_potencias_de_dos(num1, num2):
 
 # Ejercicio 5.7a - en realidad NO es esto lo que se pide, me equivoque
 def divisores(n):
-    lista_divisores = [] # se puede hacer sin listas?
+    lista_divisores = [] # se puede hacer sin listas?
     for i in range(1, n):
         if n % i == 0:
             lista_divisores.append(i)
@@ -937,3 +937,28 @@ def es_palindromo(s):
     if s_sinespacios == s_sinespacios[::-1]:
         return True # asi como está es case-sensitive, o sea devolvería False para 'Anita lava la tina' y True para 'anita lava la tina'
     return False
+
+def pedir_entero(mensaje, minimo, maximo):
+    caracteres_posibles = '1234567890'
+    numero_negativo = False
+    es_entero = True
+    while True:
+        entrada = input(mensaje + ' ' + f'[{minimo} .. {maximo}]')
+        if entrada[0:] == '-': # numero negativo
+            entrada = entrada[1:] # me quedo con el resto del caracter, seria el numero positivo
+            numero_negativo = True
+        for c in entrada:
+            if c not in caracteres_posibles:
+                es_entero = False
+                break # no hay necesidad de seguir iterando si ya se que no es un numero
+            es_entero = True # va a perdurar solamente si todos los caracteres son numericos (salvo el primero que ya me lo saque de encima), porque si hay alguno que no lo es, no llega a esta linea por el break
+        if es_entero:
+            if numero_negativo:
+                num = -int(entrada)
+            else:
+                num = int(entrada)
+            if num >= minimo and num <= maximo:
+                return num # automaticamente sale del while True
+        print(f'Por favor ingrese un número entre {minimo} y {maximo}')
+                
+            
