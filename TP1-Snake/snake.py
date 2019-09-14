@@ -40,69 +40,77 @@ direcciones_posibles = ('w', 's', 'a', 'd') # tupla con las cuatro direcciones p
 direccion = direcciones_posibles[randrange(4)] # inicialmente va en una direccion aleatoria
 longitud = 1 # la vibora arranca teniendo longitud 1
 longitud_maxima = 10
-dt = 0.2 # paso temporal (en segundos) entre iteraciones, si es mas chico la vibora va mas rapido
+dt = 1 # paso temporal (en segundos) entre iteraciones, si es mas chico la vibora va mas rapido
 t_espera_max = 2 # maximo tiempo de espera para que el usuario ingrese una direccion
 salir = False
+pausa = False
 
 while len(vibora_fila) < longitud_maxima:
-    #sleep(dt)
-    input_usuario = tuple(timed_input(dt))
-    #input_usuario = input('Ingresar direccion: ')
-    for i in input_usuario:
-        if i in direcciones_posibles:
-            direccion = i
+    if not pausa:
+        #sleep(dt)
+        input_usuario = tuple(timed_input(dt))
+        #input_usuario = input('Ingresar direccion: ')
+        for i in input_usuario:
+            if i in direcciones_posibles:
+                direccion = i
+                break
+            if i == 'q':
+                salir = True
+                break
+            if i == 'p':
+                pausa = not pausa
+        if salir: # quit
             break
-        if i == 'q':
-            salir = True
-            break
-    if salir: # quit
-        break
-    comio_fruta, se_mordio = actualizar_estado(vibora_fila, vibora_columna, direccion, fruta_fila, fruta_columna)
-    
-    if vibora_fila[len(vibora_fila)-1] < 0 or vibora_fila[len(vibora_fila)-1] >= alto_tablero or vibora_columna[len(vibora_fila)-1] < 0 or vibora_columna[len(vibora_fila)-1] >= ancho_tablero:
-        print('Te fuiste del tablero')
-        break
-    
-    if comio_fruta:
-        fruta_fila, fruta_columna = reubicar_fruta(vibora_fila, vibora_columna, ancho_tablero, alto_tablero)
-    
-    tablero = [list(x) for x in tablero_vacio]
-    for i in range(len(tablero)):
-        for j in range(len(tablero[0])):
-            if i == fruta_fila and j == fruta_columna:
-                tablero[i][j] = 2
-        for k in range(len(vibora_fila)):
-            tablero[vibora_fila[k]][vibora_columna[k]] = 1
+        comio_fruta, se_mordio = actualizar_estado(vibora_fila, vibora_columna, direccion, fruta_fila, fruta_columna)
         
-    clear_terminal()
-    for i in range(len(tablero)):
-        if i == 0:
-            print('_' * (ancho_tablero + 1))
-        for j in range(len(tablero[0])):
-            if j == 0:
-                print('|', end = '')
-            if j < len(tablero[0]) - 1:
-                if tablero[i][j] == 0:
-                    print(' ', end = '')
-                elif tablero[i][j] == 1:
-                    print('#', end = '')
-                elif tablero[i][j] == 2:
-                    print('*', end = '')
-            else:
-                if tablero[i][j] == 0:
-                    print(' |')
-                elif tablero[i][j] == 1:
-                    print('#|')
-                elif tablero[i][j] == 2:
-                    print('*|') 
-        if i == len(tablero)-1:
-            print('¯' * (ancho_tablero + 1))
-        #print(tablero[i])
-    
-    if se_mordio:
-        print('Las viboras comen frutas, no viboras')
-        break
-    
+        if vibora_fila[len(vibora_fila)-1] < 0 or vibora_fila[len(vibora_fila)-1] >= alto_tablero or vibora_columna[len(vibora_fila)-1] < 0 or vibora_columna[len(vibora_fila)-1] >= ancho_tablero:
+            print('Te fuiste del tablero')
+            break
+        
+        if comio_fruta:
+            fruta_fila, fruta_columna = reubicar_fruta(vibora_fila, vibora_columna, ancho_tablero, alto_tablero)
+        
+        tablero = [list(x) for x in tablero_vacio]
+        for i in range(len(tablero)):
+            for j in range(len(tablero[0])):
+                if i == fruta_fila and j == fruta_columna:
+                    tablero[i][j] = 2
+            for k in range(len(vibora_fila)):
+                tablero[vibora_fila[k]][vibora_columna[k]] = 1
+            
+        clear_terminal()
+        for i in range(len(tablero)):
+            if i == 0:
+                print('_' * (ancho_tablero + 1))
+            for j in range(len(tablero[0])):
+                if j == 0:
+                    print('|', end = '')
+                if j < len(tablero[0]) - 1:
+                    if tablero[i][j] == 0:
+                        print(' ', end = '')
+                    elif tablero[i][j] == 1:
+                        print('#', end = '')
+                    elif tablero[i][j] == 2:
+                        print('*', end = '')
+                else:
+                    if tablero[i][j] == 0:
+                        print(' |')
+                    elif tablero[i][j] == 1:
+                        print('#|')
+                    elif tablero[i][j] == 2:
+                        print('*|') 
+            if i == len(tablero)-1:
+                print('¯' * (ancho_tablero + 1))
+            #print(tablero[i])
+        
+        if se_mordio:
+            print('Las viboras comen frutas, no viboras')
+            break
+    else:
+        input_usuario = tuple(timed_input(dt))
+        if 'p' in input_usuario:
+            pausa = not pausa
+            
 if len(vibora_fila) == longitud_maxima:
     print('Felicitaciones !')
 else:
