@@ -46,8 +46,8 @@ salir = False
 
 while len(vibora_fila) < longitud_maxima:
     #sleep(dt)
-    #input_usuario = tuple(timed_input(dt))
-    input_usuario = input('Ingresar direccion: ')
+    input_usuario = tuple(timed_input(dt))
+    #input_usuario = input('Ingresar direccion: ')
     for i in input_usuario:
         if i in direcciones_posibles:
             direccion = i
@@ -70,11 +70,11 @@ while len(vibora_fila) < longitud_maxima:
     for i in range(len(tablero)):
         for j in range(len(tablero[0])):
             if i == fruta_fila and j == fruta_columna:
-                tablero[i][j] = -1
+                tablero[i][j] = 2
         for k in range(len(vibora_fila)):
             tablero[vibora_fila[k]][vibora_columna[k]] = 1
     
-    #clear_terminal()
+    clear_terminal()
     for i in range(len(tablero)):
         print(tablero[i])
     
