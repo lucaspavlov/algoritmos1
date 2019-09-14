@@ -11,7 +11,7 @@ from random import randrange
 from time import sleep
 from modulosnake import actualizar_estado, reubicar_fruta
 
-ancho_tablero = 10 # ancho del tablero, M
+ancho_tablero = 20 # ancho del tablero, M
 alto_tablero = 18 # alto del tablero, N
 
 fila = []
@@ -73,10 +73,31 @@ while len(vibora_fila) < longitud_maxima:
                 tablero[i][j] = 2
         for k in range(len(vibora_fila)):
             tablero[vibora_fila[k]][vibora_columna[k]] = 1
-    
+        
     clear_terminal()
     for i in range(len(tablero)):
-        print(tablero[i])
+        if i == 0:
+            print('_' * (ancho_tablero + 1))
+        for j in range(len(tablero[0])):
+            if j == 0:
+                print('|', end = '')
+            if j < len(tablero[0]) - 1:
+                if tablero[i][j] == 0:
+                    print(' ', end = '')
+                elif tablero[i][j] == 1:
+                    print('#', end = '')
+                elif tablero[i][j] == 2:
+                    print('*', end = '')
+            else:
+                if tablero[i][j] == 0:
+                    print(' |')
+                elif tablero[i][j] == 1:
+                    print('#|')
+                elif tablero[i][j] == 2:
+                    print('*|') 
+        if i == len(tablero)-1:
+            print('¯' * (ancho_tablero + 1))
+        #print(tablero[i])
     
     if se_mordio:
         print('Las viboras comen frutas, no viboras')
