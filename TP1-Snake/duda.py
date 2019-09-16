@@ -14,7 +14,7 @@ for j in range(alto)
 tuplatablero = tuple(tablero)
 tablero[1][2] = 1
 
-% analogo 1d
+# analogo 1d
 
 f = []
 f.append(0)
