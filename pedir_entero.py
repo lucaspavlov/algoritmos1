@@ -2,21 +2,14 @@ def pedir_entero(mensaje, minimo, maximo):
     '''Función que pide al usuario un entero entre un valor mínimo y otro máximo (inclusive). Si el usuario ingresa un número que no cumpla eso, o una cadena representando cualquier otra cosa, vuelve a pedir el número. Cuando el usuario ingresa un número entero entre el mínimo y el máximo, la función devuelve ese número'''
     # Materia: Algoritmos y Programación 1 cátedra Essaya, práctica Grace. Alumno: Lucas Pavlov, legajo 105412. Correctora: Florencia Rodríguez.
 
-    while True: # repito el loop infinitamente, voy a salir solamente cuando se cumplan las condiciones que pide el enunciado, usando return
-        es_entero = False # booleano que es True si el número ingresado es entero o False si no lo es
-        es_negativo = False # booleano que va a ser True si el número ingresado es negativo o False si no lo es
-        entrada = input(mensaje + ' ' + f'[{minimo} .. {maximo}] ') # imprimo el mensaje para el usuario
-
-        if entrada[:1] == '-': # si el primer dígito de la cadena que ingresó el usuario es '-', entonces si lo que se ingresó es un número, es negativo
-            entrada = entrada[1:] # me quedo con el resto de la cadena, seria el modulo del numero (si la cadena "es un número")
-            es_negativo = True # acá guardo la información de que el número en realidad es negativo, aunque ahora la variable "entrada" sea una cadena que contiene solamente al módulo del número
-
-        if entrada.isdigit(): # si el input del usuario (salvo el primer caracter si ese es un -) esta conformado solamente por digitos, entonces es un entero, y entra al if
-            if es_negativo:
-                num = -int(entrada) # si la cadena representa un número entero y negativo, obtengo el número usando int() sobre "entrada", que contiene el módulo del número, y agregando el signo -
-            else:
-                num = int(entrada) # en este caso (es_entero = True y es_negativo = False) se trata de un entero positivo
+    while True:
+        entrada = input(mensaje + ' ' + f'[{minimo} .. {maximo}] ')
+        cadena_a_chequear = entrada
+        if entrada[:1] == '-': 
+            cadena_a_chequear = entrada[1:]
+        if cadena_a_chequear.isdigit():
+            num = int(entrada)
             if num >= minimo and num <= maximo:
-                return num # si la entrada del usuario representa un número que es entero y está dentro de los valores mínimo y máximo, la función devuelve el número (y con return salgo del while True:)
+                return num
 
-        print(f'Por favor ingrese un número entre {minimo} y {maximo}') # a esta línea se llega si la cadena ingresada no representa un entero entre minimo y maximo. En ese caso se despliega este mensaje y se vuelve a la primera línea del while
+        print(f'Por favor ingrese un número entre {minimo} y {maximo}')
