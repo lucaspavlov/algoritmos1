@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 """
 Created on Sat Aug 24 20:17:36 2019
-
 @author: Lucas
 """
 
@@ -229,6 +228,8 @@ def es_par(n):
         return False
     
 def es_primo(n):
+    if n == 2:
+        return True
     if es_par(n):
         return False
     elif n == 1:
@@ -1023,3 +1024,75 @@ def vote_por_mi_algunos_con_genero(nombres_y_generos, posicion_origen, cantidad_
             print('Estimado ' + nombres[i] + ', vote por mi')
         elif generos[i].upper() == 'F':
             print('Estimada ' + nombres[i] + ', vote por mi')
+
+# Ejercicio 7.4
+
+def producto_escalar(v1, v2):
+    prod_esc = 0
+    for i in range(len(v1)):
+        prod_esc += v1[i] * v2[i]
+    return prod_esc
+
+def son_ortogonales(v1, v2):
+    if producto_escalar(v1, v2) == 0:
+        return True
+    return False
+
+def normavec(v):
+    norm = 0
+    for componente in v:
+        norm += componente**2
+    return norm**0.5
+
+def son_paralelos(v1, v2): # falla por flotante, preguntar
+    if abs(producto_escalar(v1, v2)) == normavec(v1) * normavec(v2):
+        return True
+    return False
+
+def devuelve_lista_primos(l):
+    lista_primos = []
+    for elemento in l:
+        if es_primo(elemento):
+            lista_primos.append(elemento)
+    return lista_primos
+
+# o directamente list(filter(es_primo, l))
+    
+def sumatoria_y_promedio(l):
+    return sum(l), sum(l)/len(l)
+
+def factoriales_lista(l):
+    return list(map(factorial, l))
+
+def mayores_menores_iguales(l, k):
+    mayores = []
+    menores = []
+    iguales = []
+    for elemento in l:
+        if elemento > k:
+            mayores.append(elemento)
+        elif elemento < k:
+            menores.append(elemento)
+        else:
+            iguales.append(elemento)
+    return mayores, menores, iguales
+
+def multiplos(l, k):
+    return list(filter(lambda x : x % k == 0, l))
+
+def cadenas_nombres(lt):
+    lista_de_cadenas = []
+    for t in lt:
+        lista_de_cadenas.append(t[1] + ' ' + t[2] + '. ' + t[0])
+    return lista_de_cadenas
+
+def invertir_lista(l):
+    lista_invertida = []
+    for i in range(len(l)):
+        lista_invertida.append(l[-i-1])
+    return lista_invertida
+
+def invertir_lista_modificandola(l):
+    for i in range(len(l)-1):
+        a = l.pop(0)
+        l.insert(len(l)-i, a)
