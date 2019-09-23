@@ -1096,3 +1096,20 @@ def invertir_lista_modificandola(l):
     for i in range(len(l)-1):
         a = l.pop(0)
         l.insert(len(l)-i, a)
+
+# Ejercicio 7.9
+
+def empaquetar(l): # se puede hacer mas elegante?
+    '''Dada una lista, devuelve una lista de tuplas con los distintos elementos y las veces que cada uno aparece en forma consecutiva'''
+    elemento_anterior = l[0]
+    contador = 1
+    lista_empaquetada = []
+    for i in range(1, len(l)):
+        if l[i] == elemento_anterior:
+            contador += 1
+        else:
+            lista_empaquetada.append((elemento_anterior, contador))
+            contador = 1
+            elemento_anterior = l[i]
+    lista_empaquetada.append((elemento_anterior, contador))
+    return lista_empaquetada
