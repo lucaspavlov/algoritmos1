@@ -1114,6 +1114,46 @@ def empaquetar(l): # se puede hacer mas elegante?
     lista_empaquetada.append((elemento_anterior, contador))
     return lista_empaquetada
 
+# Ejercicio 7.10
+
+def suma_de_matrices(m1, m2):
+    '''Recibe dos matrices como lista de listas y devuelve la suma como lista de listas'''
+    matriz_suma = []
+    for i in range(len(m1)):
+        fila_m1 = m1[i]
+        fila_m2 = m2[i]
+        fila_suma = []
+        for j in range(len(fila_m1)):
+            fila_suma.append(fila_m1[j]+fila_m2[j])
+        matriz_suma.append(fila_suma)
+    return matriz_suma
+
+def traspuesta(m):
+    '''Dada una matriz expresada como lista de lista, devuelve la traspuesta. No modifica la matriz ingresada.'''
+    matriz_traspuesta = []
+    for j in range(len(m[0])): # recorro columnas
+        fila_traspuesta = []
+        for i in range(len(m)): # recorro filas
+            fila_traspuesta.append(m[i][j])
+        matriz_traspuesta.append(fila_traspuesta)
+    return matriz_traspuesta
+
+def producto_de_matrices(m1, m2):
+    '''Dadas dos matrices m1 y m2 expresadas como lista de listas, devuelve el producto'''
+    matriz_producto = []
+    m2_traspuesta = traspuesta(m2)
+    #m2_traspuesta = m2
+    for i in range(len(m1)): # recorro m1 por filas
+        fila_m1 = m1[i]
+        fila_producto = []
+        for j in range(len(m2_traspuesta)): # recorro columnas de m2, o sea las filas de m2 traspuesta
+            columna_m2 = m2_traspuesta[j]
+            elemento = 0
+            for k in range(len(columna_m2)):
+                elemento += fila_m1[k] * columna_m2[k]
+            fila_producto.append(elemento)
+        matriz_producto.append(fila_producto)
+    return matriz_producto
 # Ejercicio 7.11
 
 def texto_a_pagina(texto, longitud_maxima):
