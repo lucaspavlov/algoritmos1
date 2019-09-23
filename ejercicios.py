@@ -1175,3 +1175,18 @@ def texto_a_pagina(texto, longitud_maxima):
                 break
     renglones.append(texto[p:]) # agrego lo que falta (una vez que sali del while queda un puchito)
     return renglones
+
+# Ejercicio 7.12a
+def mapear(f, lista):
+    funcion_a_lista = []
+    for elemento in lista:
+        funcion_a_lista.append(f(elemento))
+    return funcion_a_lista
+
+# Ejercicio 7.12b
+def filtrar(f, lista):
+    lista_filtrada = []
+    for elemento in lista:
+        if f(elemento) == True:
+            lista_filtrada.append(elemento)
+    return lista_filtrada
