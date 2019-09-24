@@ -67,3 +67,15 @@ def salir(input_usuario, tecla_salir = 'q'):
     if tecla_salir in input_usuario:
         return True
     return False
+
+def crear_tablero(ancho_tablero, alto_tablero):
+    '''Dado un ancho y alto del tablero, devuelve una tupla de tuplas llena de ceros, que representa al tablero vacío (sin vibora ni fruta)'''
+    fila = []
+    for i in range(ancho_tablero):
+        fila.append(0)
+    
+    tablero_vacio = []
+    for j in range(alto_tablero):
+        tablero_vacio.append(tuple(fila))
+    
+    return tuple(tablero_vacio)
