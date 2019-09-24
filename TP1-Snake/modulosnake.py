@@ -44,3 +44,26 @@ def reubicar_fruta(vibora_fila, vibora_columna, ancho_tablero, alto_tablero):
             return fruta_fila, fruta_columna
     
     #return vibora_fila, vibora_columna
+
+def actualizar_direccion(input_usuario, direccion_actual, tecla_abajo = 's', tecla_arriba = 'w', tecla_izquierda = 'a', tecla_derecha = 'd'):
+    '''Dada una cadena de caracteres ingresada por el usuario, actualiza la direccion en la que se mueve la vibora'''
+    if direccion_actual == tecla_abajo or direccion_actual == tecla_arriba:
+        teclas_posibles = tecla_izquierda + tecla_derecha
+    else:
+        teclas_posibles = tecla_abajo + tecla_arriba
+    for c in input_usuario:
+        if c in teclas_posibles:
+            return c
+    return direccion_actual
+
+def pausa(input_usuario, pausa_activada, tecla_pausa = 'p'):
+    '''Function que recibe la cadena ingresada por el usuario y el estado actual del programa (en pausa o no como booleano, True o False). Si el usuario apretó la tecla de pausa, devuelve False si el juego estaba en pausa o True si no lo estaba'''
+    for c in input_usuario:
+        if c == tecla_pausa:
+            return not pausa_activada
+
+def salir(input_usuario, tecla_salir = 'q'):
+    '''Funcion que recibe la entrada del usuario y devuelve True si el usuario apretó la tecla para salir del juego o False en caso contrario'''
+    if tecla_salir in input_usuario:
+        return True
+    return False
