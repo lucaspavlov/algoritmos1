@@ -79,3 +79,37 @@ def crear_tablero(ancho_tablero, alto_tablero):
         tablero_vacio.append(tuple(fila))
     
     return tuple(tablero_vacio)
+
+def inicializar_tablero(fruta_fila, fruta_columna, vibora_fila, vibora_columna_tablero_vacio):
+    tablero = [list(x) for x in tablero_vacio]
+    for i in range(len(tablero)):
+        for j in range(len(tablero[0])):
+            if i == fruta_fila and j == fruta_columna:
+                tablero[i][j] = 2
+        for k in range(len(vibora_fila)):
+            tablero[vibora_fila[k]][vibora_columna[k]] = 1
+    return tablero
+            
+def imprimir_tablero(tablero):
+    for i in range(len(tablero)):
+        if i == 0:
+            print('_' * (ancho_tablero + 1))
+        for j in range(len(tablero[0])):
+            if j == 0:
+                print('|', end = '')
+            if j < len(tablero[0]) - 1:
+                if tablero[i][j] == 0:
+                    print(' ', end = '')
+                elif tablero[i][j] == 1:
+                    print('#', end = '')
+                elif tablero[i][j] == 2:
+                    print('*', end = '')
+            else:
+                if tablero[i][j] == 0:
+                    print(' |')
+                elif tablero[i][j] == 1:
+                    print('#|')
+                elif tablero[i][j] == 2:
+                    print('*|') 
+        if i == len(tablero)-1:
+            print('¯' * (ancho_tablero + 1))
