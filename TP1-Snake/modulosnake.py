@@ -60,6 +60,7 @@ def pausa(input_usuario, pausa_activada, tecla_pausa = 'p'):
     for c in input_usuario:
         if c == tecla_pausa:
             return not pausa_activada
+    return pausa_activada
 
 def salir(input_usuario, tecla_salir = 'q'):
     '''Funcion que recibe la entrada del usuario y devuelve True si el usuario apretó la tecla para salir del juego o False en caso contrario'''
@@ -113,3 +114,15 @@ def imprimir_tablero(tablero):
                     print('*|') 
         if i == len(tablero)-1:
             print('¯' * (ancho_tablero + 1))
+            
+def imprimir_mensaje_final(longitud_vibora, longitud_maxima):
+    if longitud_vibora == longitud_maxima:
+        print('Felicitaciones !')
+    else:
+        print('Seguí participando')
+        
+def salio_del_tablero(vibora_fila, vibora_columna, ancho_tablero, alto_tablero):
+    if vibora_fila[len(vibora_fila)-1] < 0 or vibora_fila[len(vibora_fila)-1] >= alto_tablero or vibora_columna[len(vibora_fila)-1] < 0 or vibora_columna[len(vibora_fila)-1] >= ancho_tablero:
+        return True
+    return False
+
