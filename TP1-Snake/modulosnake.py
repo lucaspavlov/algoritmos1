@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 """
 Created on Sat Sep 14 13:03:21 2019
-
 @author: Lucas
 """
 
@@ -80,7 +79,7 @@ def crear_tablero(ancho_tablero, alto_tablero):
     
     return tuple(tablero_vacio)
 
-def inicializar_tablero(fruta_fila, fruta_columna, vibora_fila, vibora_columna_tablero_vacio):
+def inicializar_tablero(fruta_fila, fruta_columna, vibora_fila, vibora_columna, tablero_vacio):
     tablero = [list(x) for x in tablero_vacio]
     for i in range(len(tablero)):
         for j in range(len(tablero[0])):
@@ -91,6 +90,7 @@ def inicializar_tablero(fruta_fila, fruta_columna, vibora_fila, vibora_columna_t
     return tablero
             
 def imprimir_tablero(tablero):
+    ancho_tablero = len(tablero[0])
     for i in range(len(tablero)):
         if i == 0:
             print('_' * (ancho_tablero + 1))
