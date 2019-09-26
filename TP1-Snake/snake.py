@@ -1,20 +1,14 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Tue Sep 24 23:17:41 2019
-
-@author: Lucas
-"""
-
 from terminal import clear_terminal, timed_input
 from random import randrange
-from time import sleep
+#from time import sleep
 
 ANCHO_TABLERO = 20 # ancho del tablero, M
 ALTO_TABLERO = 18 # alto del tablero, N
 LONGITUD_MAXIMA = 3
 DT = 0.2 # paso temporal (en segundos) entre iteraciones, si es mas chico la vibora va mas rapido
-DIRECCIONES_POSIBLES = ('w', 's', 'a', 'd') # tupla con las cuatro direcciones posibles, w (arriba), s (abajo), a (izquierda), d (derecha)
+DIRECCIONES_POSIBLES = ('w', 's', 'a', 'd') # tupla con las cuatro direcciones posibles en la forma (arriba, abajo, izquirda, derecha)
+TECLA_PAUSA = 'p'
+TECLA_SALIR = 'q'
 
 def main():
     
@@ -46,18 +40,18 @@ def main():
     imprimir_mensaje_final(len(vibora[0]), LONGITUD_MAXIMA)
 
 
-def actualizar_estado(vibora, direccion, fruta):
+def actualizar_estado(vibora, direccion, fruta, direcciones_posibles = DIRECCIONES_POSIBLES):
     '''Dadas las coordenadas de la vibora y de la fruta y la dirección en la que se está moviendo la vibora, devuelve dos booleanos, uno que indica si la vibora comio una fruta en ese movimiento, y otro que indica si se mordio a si misma'''
-    if direccion == 'w':
+    if direccion == direcciones_posibles[0]:
         vibora[0].append(vibora[0][len(vibora[0])-1] - 1)
         vibora[1].append(vibora[1][len(vibora[1])-1])
-    if direccion == 's':
+    if direccion == direcciones_posibles[1]:
         vibora[0].append(vibora[0][len(vibora[0])-1] + 1)
         vibora[1].append(vibora[1][len(vibora[1])-1])
-    if direccion == 'a':
+    if direccion == direcciones_posibles[2]:
         vibora[0].append(vibora[0][len(vibora[0])-1])
         vibora[1].append(vibora[1][len(vibora[1])-1] - 1)
-    if direccion == 'd':
+    if direccion == direcciones_posibles[3]:
         vibora[0].append(vibora[0][len(vibora[0])-1])
         vibora[1].append(vibora[1][len(vibora[1])-1] + 1)
     if vibora[0][len(vibora[0])-1] != fruta[0] or vibora[1][len(vibora[1])-1] != fruta[1]:
@@ -86,25 +80,25 @@ def reubicar_fruta(vibora, ancho_tablero, alto_tablero):
     
     #return vibora[0], vibora[1]
 
-def actualizar_direccion(input_usuario, direccion_actual, tecla_abajo = 's', tecla_arriba = 'w', tecla_izquierda = 'a', tecla_derecha = 'd'):
+def actualizar_direccion(input_usuario, direccion_actual, direcciones_posibles = DIRECCIONES_POSIBLES):
     '''Dada una cadena de caracteres ingresada por el usuario, actualiza la direccion en la que se mueve la vibora'''
-    if direccion_actual == tecla_abajo or direccion_actual == tecla_arriba:
-        teclas_posibles = tecla_izquierda + tecla_derecha
+    if direccion_actual == direcciones_posibles[0] or direccion_actual == direcciones_posibles[1]:
+        teclas_posibles = direcciones_posibles[2] + direcciones_posibles[3]
     else:
-        teclas_posibles = tecla_abajo + tecla_arriba
+        teclas_posibles = direcciones_posibles[0] + direcciones_posibles[1]
     for c in input_usuario:
         if c in teclas_posibles:
             return c
     return direccion_actual
 
-def pausa(input_usuario, pausa_activada, tecla_pausa = 'p'):
+def pausa(input_usuario, pausa_activada, tecla_pausa = TECLA_PAUSA):
     '''Función que recibe la cadena ingresada por el usuario y el estado actual del programa (en pausa o no como booleano, True o False). Si el usuario apretó la tecla de pausa, devuelve False si el juego estaba en pausa o True si no lo estaba'''
     for c in input_usuario:
         if c == tecla_pausa:
             return not pausa_activada
     return pausa_activada
 
-def salir(input_usuario, tecla_salir = 'q'):
+def salir(input_usuario, tecla_salir = TECLA_SALIR):
     '''Función que recibe la entrada del usuario y devuelve True si el usuario apretó la tecla para salir del juego o False en caso contrario'''
     if tecla_salir in input_usuario:
         return True
