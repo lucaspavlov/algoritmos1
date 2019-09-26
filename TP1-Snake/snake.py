@@ -184,35 +184,35 @@ def salio_del_tablero(vibora, ancho_tablero, alto_tablero):
         return True
     return False
 
-assert TECLA_PAUSA not in TECLAS_DIRECCIONES
-assert TECLA_SALIR not in TECLAS_DIRECCIONES
-assert TECLA_PAUSA != TECLA_SALIR
-assert LONGITUD_MAXIMA > 1
-assert ANCHO_TABLERO > 2
-assert ALTO_TABLERO > 2
-assert DT > 0
-assert type(LONGITUD_MAXIMA) is int
-assert type(ANCHO_TABLERO) is int
-assert type(ALTO_TABLERO) is int
-assert len(TECLA_SALIR) == 1
-assert len(TECLA_PAUSA) == 1
-assert len(TECLAS_DIRECCIONES) == 4
-assert type(TECLA_SALIR) is str
-assert type(TECLA_PAUSA) is str
-assert type(TECLAS_DIRECCIONES) is tuple
-assert type(TECLAS_DIRECCIONES[0]) is str
-assert type(TECLAS_DIRECCIONES[1]) is str
-assert type(TECLAS_DIRECCIONES[2]) is str
-assert type(TECLAS_DIRECCIONES[3]) is str
-assert len(TECLAS_DIRECCIONES[0]) == 1
-assert len(TECLAS_DIRECCIONES[1]) == 1
-assert len(TECLAS_DIRECCIONES[2]) == 1
-assert len(TECLAS_DIRECCIONES[3]) == 1
-assert TECLAS_DIRECCIONES[0] != TECLAS_DIRECCIONES[1]
-assert TECLAS_DIRECCIONES[0] != TECLAS_DIRECCIONES[2]
-assert TECLAS_DIRECCIONES[0] != TECLAS_DIRECCIONES[3]
-assert TECLAS_DIRECCIONES[1] != TECLAS_DIRECCIONES[2]
-assert TECLAS_DIRECCIONES[1] != TECLAS_DIRECCIONES[3]
-assert TECLAS_DIRECCIONES[2] != TECLAS_DIRECCIONES[3]
+assert TECLA_PAUSA not in TECLAS_DIRECCIONES, "La tecla de pausa no puede coincidir con alguna de las teclas que mueven a la vibora."
+assert TECLA_SALIR not in TECLAS_DIRECCIONES, "La tecla para salir del juego no puede coincidir con alguna de las teclas que mueven a la vibora."
+assert TECLA_PAUSA != TECLA_SALIR, "La tecla para poner pausa no puede coincidir con la tecla para salir del juego."
+assert LONGITUD_MAXIMA > 1, "La longitud máxima de la vibora debe ser al menos 2."
+assert ANCHO_TABLERO > 2, "El ancho del tablero debe ser mayor a 2."
+assert ALTO_TABLERO > 2, "La altura del tablero debe ser mayor a 2."
+assert DT > 0, "El intervalo temporal debe ser positivo."
+assert type(LONGITUD_MAXIMA) is int, "La longitud maxima (ganadora) de la vibora debe ser un entero."
+assert type(ANCHO_TABLERO) is int, "El ancho del tablero debe ser un entero."
+assert type(ALTO_TABLERO) is int, "La altura del tablero debe ser un entero."
+assert len(TECLA_SALIR) == 1, "La cadena que representa la tecla para salir del juego debe tener longitud 1."
+assert len(TECLA_PAUSA) == 1, "La cadena que representa la tecla para poner o sacar la pausa debe tener longitud 1."
+assert len(TECLAS_DIRECCIONES) == 4, "La tupla que contiene las teclas para mover a la vibora debe tener longitud 4."
+assert type(TECLA_SALIR) is str, "La variable TECLA_SALIR debe ser una cadena."
+assert type(TECLA_PAUSA) is str, "La variable TECLA_PAUSA debe ser una cadena."
+assert type(TECLAS_DIRECCIONES) is tuple, "La variable TECLAS_DIRECCIONES debe ser una tupla."
+assert type(TECLAS_DIRECCIONES[0]) is str, "Los elementos de TECLAS_DIRECCIONES deben ser cadenas de longitud 1."
+assert type(TECLAS_DIRECCIONES[1]) is str, "Los elementos de TECLAS_DIRECCIONES deben ser cadenas de longitud 1."
+assert type(TECLAS_DIRECCIONES[2]) is str, "Los elementos de TECLAS_DIRECCIONES deben ser cadenas de longitud 1."
+assert type(TECLAS_DIRECCIONES[3]) is str, "Los elementos de TECLAS_DIRECCIONES deben ser cadenas de longitud 1."
+assert len(TECLAS_DIRECCIONES[0]) == 1, "Los elementos de TECLAS_DIRECCIONES deben ser cadenas de longitud 1."
+assert len(TECLAS_DIRECCIONES[1]) == 1, "Los elementos de TECLAS_DIRECCIONES deben ser cadenas de longitud 1."
+assert len(TECLAS_DIRECCIONES[2]) == 1, "Los elementos de TECLAS_DIRECCIONES deben ser cadenas de longitud 1."
+assert len(TECLAS_DIRECCIONES[3]) == 1, "Los elementos de TECLAS_DIRECCIONES deben ser cadenas de longitud 1."
+assert TECLAS_DIRECCIONES[0] != TECLAS_DIRECCIONES[1], "Los elementos de TECLAS_DIRECCIONES deben ser todos distintos entre si."
+assert TECLAS_DIRECCIONES[0] != TECLAS_DIRECCIONES[2], "Los elementos de TECLAS_DIRECCIONES deben ser todos distintos entre si."
+assert TECLAS_DIRECCIONES[0] != TECLAS_DIRECCIONES[3], "Los elementos de TECLAS_DIRECCIONES deben ser todos distintos entre si."
+assert TECLAS_DIRECCIONES[1] != TECLAS_DIRECCIONES[2], "Los elementos de TECLAS_DIRECCIONES deben ser todos distintos entre si."
+assert TECLAS_DIRECCIONES[1] != TECLAS_DIRECCIONES[3], "Los elementos de TECLAS_DIRECCIONES deben ser todos distintos entre si."
+assert TECLAS_DIRECCIONES[2] != TECLAS_DIRECCIONES[3], "Los elementos de TECLAS_DIRECCIONES deben ser todos distintos entre si."
 
 main()
