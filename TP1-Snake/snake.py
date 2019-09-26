@@ -3,10 +3,10 @@ from random import randrange
 #from time import sleep
 
 ANCHO_TABLERO = 20 # ancho del tablero, M
-ALTO_TABLERO = 18 # alto del tablero, N
+ALTO_TABLERO = 10  # alto del tablero, N
 LONGITUD_MAXIMA = 8
 DT = 0.2 # paso temporal (en segundos) entre iteraciones, si es mas chico la vibora va mas rapido
-TECLAS_DIRECCIONES = ('w', 's', 'a', 'd') # tupla con las cuatro direcciones posibles en la forma (arriba, abajo, izquirda, derecha)
+TECLAS_DIRECCIONES = ('w', 's', 'a', 'd') # tupla con las cuatro direcciones posibles en la forma (arriba, abajo, izquierda, derecha)
 TECLA_PAUSA = 'p'
 TECLA_SALIR = 'q'
 
@@ -22,12 +22,12 @@ def main():
         if not p:
             direccion = actualizar_direccion(input_usuario, direccion, TECLAS_DIRECCIONES)
             
-            comio_fruta, se_mordio = actualizar_estado(vibora, direccion, fruta, TECLAS_DIRECCIONES)
+            comio_fruta = actualizar_estado(vibora, direccion, fruta, TECLAS_DIRECCIONES)
                     
             if comio_fruta:
                 fruta = reubicar_fruta(vibora, ANCHO_TABLERO, ALTO_TABLERO)
             
-            if se_mordio or salir(input_usuario, TECLA_SALIR) or salio_del_tablero(vibora, ANCHO_TABLERO, ALTO_TABLERO): # quit
+            if se_mordio(vibora) or salir(input_usuario, TECLA_SALIR) or salio_del_tablero(vibora, ANCHO_TABLERO, ALTO_TABLERO): # quit
                 break
             
             modificar_tablero(fruta, vibora, tablero)
@@ -60,12 +60,15 @@ def actualizar_estado(vibora, direccion, fruta, teclas_direcciones):
         comio_fruta = False
     else:
         comio_fruta = True
-    se_mordio = False
+    return comio_fruta
+    
+
+def se_mordio(vibora):
+    '''Dadas las coordenadas de la vibora, devuelve True si se mordio a si misma o False si no'''
     for k in range(len(vibora[0])-1):
         if vibora[0][k] == vibora[0][len(vibora[0])-1] and vibora[1][k] == vibora[1][len(vibora[0])-1]:
-            se_mordio = True
-            break
-    return comio_fruta, se_mordio
+            return True
+    return False
 
 def reubicar_fruta(vibora, ancho_tablero, alto_tablero):
     '''Dadas las coordenadas de la vibora y las dimensiones del tablero, ubica la fruta en algún lugar del tablero no ocupado por la vibora'''
@@ -188,12 +191,12 @@ assert TECLA_PAUSA not in TECLAS_DIRECCIONES, "La tecla de pausa no puede coinci
 assert TECLA_SALIR not in TECLAS_DIRECCIONES, "La tecla para salir del juego no puede coincidir con alguna de las teclas que mueven a la vibora."
 assert TECLA_PAUSA != TECLA_SALIR, "La tecla para poner pausa no puede coincidir con la tecla para salir del juego."
 assert LONGITUD_MAXIMA > 1, "La longitud máxima de la vibora debe ser al menos 2."
+assert type(ANCHO_TABLERO) is int, "El ancho del tablero debe ser un entero."
+assert type(ALTO_TABLERO) is int, "La altura del tablero debe ser un entero."
 assert ANCHO_TABLERO > 2, "El ancho del tablero debe ser mayor a 2."
 assert ALTO_TABLERO > 2, "La altura del tablero debe ser mayor a 2."
 assert DT > 0, "El intervalo temporal debe ser positivo."
 assert type(LONGITUD_MAXIMA) is int, "La longitud maxima (ganadora) de la vibora debe ser un entero."
-assert type(ANCHO_TABLERO) is int, "El ancho del tablero debe ser un entero."
-assert type(ALTO_TABLERO) is int, "La altura del tablero debe ser un entero."
 assert len(TECLA_SALIR) == 1, "La cadena que representa la tecla para salir del juego debe tener longitud 1."
 assert len(TECLA_PAUSA) == 1, "La cadena que representa la tecla para poner o sacar la pausa debe tener longitud 1."
 assert len(TECLAS_DIRECCIONES) == 4, "La tupla que contiene las teclas para mover a la vibora debe tener longitud 4."
