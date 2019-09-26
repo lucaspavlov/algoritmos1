@@ -20,14 +20,14 @@ def main():
     while len(vibora[0]) < LONGITUD_MAXIMA:
         input_usuario = tuple(timed_input(DT))
         if not p:
-            direccion = actualizar_direccion(input_usuario, direccion)
+            direccion = actualizar_direccion(input_usuario, direccion, DIRECCIONES_POSIBLES)
             
-            comio_fruta, se_mordio = actualizar_estado(vibora, direccion, fruta)
+            comio_fruta, se_mordio = actualizar_estado(vibora, direccion, fruta, DIRECCIONES_POSIBLES)
                     
             if comio_fruta:
                 fruta = reubicar_fruta(vibora, ANCHO_TABLERO, ALTO_TABLERO)
             
-            if se_mordio or salir(input_usuario) or salio_del_tablero(vibora, ANCHO_TABLERO, ALTO_TABLERO): # quit
+            if se_mordio or salir(input_usuario, TECLA_SALIR) or salio_del_tablero(vibora, ANCHO_TABLERO, ALTO_TABLERO): # quit
                 break
             
             modificar_tablero(fruta, vibora, tablero)
@@ -35,12 +35,12 @@ def main():
             clear_terminal()
             imprimir_tablero(tablero)
             
-        p = pausa(input_usuario, p)
+        p = pausa(input_usuario, p, TECLA_PAUSA)
     
     imprimir_mensaje_final(len(vibora[0]), LONGITUD_MAXIMA)
 
 
-def actualizar_estado(vibora, direccion, fruta, direcciones_posibles = DIRECCIONES_POSIBLES):
+def actualizar_estado(vibora, direccion, fruta, direcciones_posibles):
     '''Dadas las coordenadas de la vibora y de la fruta y la dirección en la que se está moviendo la vibora, devuelve dos booleanos, uno que indica si la vibora comio una fruta en ese movimiento, y otro que indica si se mordio a si misma'''
     if direccion == direcciones_posibles[0]:
         vibora[0].append(vibora[0][len(vibora[0])-1] - 1)
@@ -73,14 +73,12 @@ def reubicar_fruta(vibora, ancho_tablero, alto_tablero):
         fruta = []
         fruta.append(randrange(alto_tablero))
         fruta.append(randrange(ancho_tablero))
-        if fruta[0] in vibora[0] and fruta[1] in vibora[1]:
-            pass
-        else:
+        if fruta[0] not in vibora[0] or fruta[1] not in vibora[1]:
             return fruta
     
     #return vibora[0], vibora[1]
 
-def actualizar_direccion(input_usuario, direccion_actual, direcciones_posibles = DIRECCIONES_POSIBLES):
+def actualizar_direccion(input_usuario, direccion_actual, direcciones_posibles):
     '''Dada una cadena de caracteres ingresada por el usuario, actualiza la direccion en la que se mueve la vibora'''
     if direccion_actual == direcciones_posibles[0] or direccion_actual == direcciones_posibles[1]:
         teclas_posibles = direcciones_posibles[2] + direcciones_posibles[3]
@@ -91,14 +89,14 @@ def actualizar_direccion(input_usuario, direccion_actual, direcciones_posibles =
             return c
     return direccion_actual
 
-def pausa(input_usuario, pausa_activada, tecla_pausa = TECLA_PAUSA):
+def pausa(input_usuario, pausa_activada, tecla_pausa):
     '''Función que recibe la cadena ingresada por el usuario y el estado actual del programa (en pausa o no como booleano, True o False). Si el usuario apretó la tecla de pausa, devuelve False si el juego estaba en pausa o True si no lo estaba'''
     for c in input_usuario:
         if c == tecla_pausa:
             return not pausa_activada
     return pausa_activada
 
-def salir(input_usuario, tecla_salir = TECLA_SALIR):
+def salir(input_usuario, tecla_salir):
     '''Función que recibe la entrada del usuario y devuelve True si el usuario apretó la tecla para salir del juego o False en caso contrario'''
     if tecla_salir in input_usuario:
         return True
