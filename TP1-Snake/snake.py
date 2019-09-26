@@ -4,9 +4,9 @@ from random import randrange
 
 ANCHO_TABLERO = 20 # ancho del tablero, M
 ALTO_TABLERO = 18 # alto del tablero, N
-LONGITUD_MAXIMA = 3
+LONGITUD_MAXIMA = 8
 DT = 0.2 # paso temporal (en segundos) entre iteraciones, si es mas chico la vibora va mas rapido
-DIRECCIONES_POSIBLES = ('w', 's', 'a', 'd') # tupla con las cuatro direcciones posibles en la forma (arriba, abajo, izquirda, derecha)
+TECLAS_DIRECCIONES = ('w', 's', 'a', 'd') # tupla con las cuatro direcciones posibles en la forma (arriba, abajo, izquirda, derecha)
 TECLA_PAUSA = 'p'
 TECLA_SALIR = 'q'
 
@@ -14,15 +14,15 @@ def main():
     
     tablero, fruta, vibora = inicializar(ANCHO_TABLERO, ALTO_TABLERO)
     
-    direccion = DIRECCIONES_POSIBLES[randrange(4)] # inicialmente va en una direccion aleatoria
+    direccion = TECLAS_DIRECCIONES[randrange(4)] # inicialmente va en una direccion aleatoria
     
     p = False
     while len(vibora[0]) < LONGITUD_MAXIMA:
         input_usuario = tuple(timed_input(DT))
         if not p:
-            direccion = actualizar_direccion(input_usuario, direccion, DIRECCIONES_POSIBLES)
+            direccion = actualizar_direccion(input_usuario, direccion, TECLAS_DIRECCIONES)
             
-            comio_fruta, se_mordio = actualizar_estado(vibora, direccion, fruta, DIRECCIONES_POSIBLES)
+            comio_fruta, se_mordio = actualizar_estado(vibora, direccion, fruta, TECLAS_DIRECCIONES)
                     
             if comio_fruta:
                 fruta = reubicar_fruta(vibora, ANCHO_TABLERO, ALTO_TABLERO)
@@ -40,18 +40,18 @@ def main():
     imprimir_mensaje_final(len(vibora[0]), LONGITUD_MAXIMA)
 
 
-def actualizar_estado(vibora, direccion, fruta, direcciones_posibles):
+def actualizar_estado(vibora, direccion, fruta, teclas_direcciones):
     '''Dadas las coordenadas de la vibora y de la fruta y la dirección en la que se está moviendo la vibora, devuelve dos booleanos, uno que indica si la vibora comio una fruta en ese movimiento, y otro que indica si se mordio a si misma'''
-    if direccion == direcciones_posibles[0]:
+    if direccion == teclas_direcciones[0]:
         vibora[0].append(vibora[0][len(vibora[0])-1] - 1)
         vibora[1].append(vibora[1][len(vibora[1])-1])
-    if direccion == direcciones_posibles[1]:
+    if direccion == teclas_direcciones[1]:
         vibora[0].append(vibora[0][len(vibora[0])-1] + 1)
         vibora[1].append(vibora[1][len(vibora[1])-1])
-    if direccion == direcciones_posibles[2]:
+    if direccion == teclas_direcciones[2]:
         vibora[0].append(vibora[0][len(vibora[0])-1])
         vibora[1].append(vibora[1][len(vibora[1])-1] - 1)
-    if direccion == direcciones_posibles[3]:
+    if direccion == teclas_direcciones[3]:
         vibora[0].append(vibora[0][len(vibora[0])-1])
         vibora[1].append(vibora[1][len(vibora[1])-1] + 1)
     if vibora[0][len(vibora[0])-1] != fruta[0] or vibora[1][len(vibora[1])-1] != fruta[1]:
@@ -78,12 +78,12 @@ def reubicar_fruta(vibora, ancho_tablero, alto_tablero):
     
     #return vibora[0], vibora[1]
 
-def actualizar_direccion(input_usuario, direccion_actual, direcciones_posibles):
+def actualizar_direccion(input_usuario, direccion_actual, teclas_direcciones):
     '''Dada una cadena de caracteres ingresada por el usuario, actualiza la direccion en la que se mueve la vibora'''
-    if direccion_actual == direcciones_posibles[0] or direccion_actual == direcciones_posibles[1]:
-        teclas_posibles = direcciones_posibles[2] + direcciones_posibles[3]
+    if direccion_actual == teclas_direcciones[0] or direccion_actual == teclas_direcciones[1]:
+        teclas_posibles = teclas_direcciones[2] + teclas_direcciones[3]
     else:
-        teclas_posibles = direcciones_posibles[0] + direcciones_posibles[1]
+        teclas_posibles = teclas_direcciones[0] + teclas_direcciones[1]
     for c in input_usuario:
         if c in teclas_posibles:
             return c
