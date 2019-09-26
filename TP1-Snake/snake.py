@@ -184,4 +184,35 @@ def salio_del_tablero(vibora, ancho_tablero, alto_tablero):
         return True
     return False
 
+assert TECLA_PAUSA not in TECLAS_DIRECCIONES
+assert TECLA_SALIR not in TECLAS_DIRECCIONES
+assert TECLA_PAUSA != TECLA_SALIR
+assert LONGITUD_MAXIMA > 1
+assert ANCHO_TABLERO > 2
+assert ALTO_TABLERO > 2
+assert DT > 0
+assert type(LONGITUD_MAXIMA) is int
+assert type(ANCHO_TABLERO) is int
+assert type(ALTO_TABLERO) is int
+assert len(TECLA_SALIR) == 1
+assert len(TECLA_PAUSA) == 1
+assert len(TECLAS_DIRECCIONES) == 4
+assert type(TECLA_SALIR) is str
+assert type(TECLA_PAUSA) is str
+assert type(TECLAS_DIRECCIONES) is tuple
+assert type(TECLAS_DIRECCIONES[0]) is str
+assert type(TECLAS_DIRECCIONES[1]) is str
+assert type(TECLAS_DIRECCIONES[2]) is str
+assert type(TECLAS_DIRECCIONES[3]) is str
+assert len(TECLAS_DIRECCIONES[0]) == 1
+assert len(TECLAS_DIRECCIONES[1]) == 1
+assert len(TECLAS_DIRECCIONES[2]) == 1
+assert len(TECLAS_DIRECCIONES[3]) == 1
+assert TECLAS_DIRECCIONES[0] != TECLAS_DIRECCIONES[1]
+assert TECLAS_DIRECCIONES[0] != TECLAS_DIRECCIONES[2]
+assert TECLAS_DIRECCIONES[0] != TECLAS_DIRECCIONES[3]
+assert TECLAS_DIRECCIONES[1] != TECLAS_DIRECCIONES[2]
+assert TECLAS_DIRECCIONES[1] != TECLAS_DIRECCIONES[3]
+assert TECLAS_DIRECCIONES[2] != TECLAS_DIRECCIONES[3]
+
 main()
