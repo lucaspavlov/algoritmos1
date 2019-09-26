@@ -7,42 +7,43 @@ Created on Sat Sep 14 13:03:21 2019
 
 from random import randrange
 
-def actualizar_estado(vibora_fila, vibora_columna, direccion, fruta_fila, fruta_columna):
+def actualizar_estado(vibora, direccion, fruta):
     if direccion == 'w':
-        vibora_fila.append(vibora_fila[len(vibora_fila)-1] - 1)
-        vibora_columna.append(vibora_columna[len(vibora_columna)-1])
+        vibora[0].append(vibora[0][len(vibora[0])-1] - 1)
+        vibora[1].append(vibora[1][len(vibora[1])-1])
     if direccion == 's':
-        vibora_fila.append(vibora_fila[len(vibora_fila)-1] + 1)
-        vibora_columna.append(vibora_columna[len(vibora_columna)-1])
+        vibora[0].append(vibora[0][len(vibora[0])-1] + 1)
+        vibora[1].append(vibora[1][len(vibora[1])-1])
     if direccion == 'a':
-        vibora_fila.append(vibora_fila[len(vibora_fila)-1])
-        vibora_columna.append(vibora_columna[len(vibora_columna)-1] - 1)
+        vibora[0].append(vibora[0][len(vibora[0])-1])
+        vibora[1].append(vibora[1][len(vibora[1])-1] - 1)
     if direccion == 'd':
-        vibora_fila.append(vibora_fila[len(vibora_fila)-1])
-        vibora_columna.append(vibora_columna[len(vibora_columna)-1] + 1)
-    if vibora_fila[len(vibora_fila)-1] != fruta_fila or vibora_columna[len(vibora_columna)-1] != fruta_columna:
-        vibora_fila.pop(0)
-        vibora_columna.pop(0)
+        vibora[0].append(vibora[0][len(vibora[0])-1])
+        vibora[1].append(vibora[1][len(vibora[1])-1] + 1)
+    if vibora[0][len(vibora[0])-1] != fruta[0] or vibora[1][len(vibora[1])-1] != fruta[1]:
+        vibora[0].pop(0)
+        vibora[1].pop(0)
         comio_fruta = False
     else:
         comio_fruta = True
     se_mordio = False
-    for k in range(len(vibora_fila)-1):
-        if vibora_fila[k] == vibora_fila[len(vibora_fila)-1] and vibora_columna[k] == vibora_columna[len(vibora_fila)-1]:
+    for k in range(len(vibora[0])-1):
+        if vibora[0][k] == vibora[0][len(vibora[0])-1] and vibora[1][k] == vibora[1][len(vibora[0])-1]:
             se_mordio = True
             break
     return comio_fruta, se_mordio
 
-def reubicar_fruta(vibora_fila, vibora_columna, ancho_tablero, alto_tablero):
+def reubicar_fruta(vibora, ancho_tablero, alto_tablero):
     while True:
-        fruta_fila = randrange(alto_tablero)
-        fruta_columna = randrange(ancho_tablero)
-        if fruta_fila in vibora_fila and fruta_columna in vibora_columna:
+        fruta = []
+        fruta.append(randrange(alto_tablero))
+        fruta.append(randrange(ancho_tablero))
+        if fruta[0] in vibora[0] and fruta[1] in vibora[1]:
             pass
         else:
-            return fruta_fila, fruta_columna
+            return fruta
     
-    #return vibora_fila, vibora_columna
+    #return vibora[0], vibora[1]
 
 def actualizar_direccion(input_usuario, direccion_actual, tecla_abajo = 's', tecla_arriba = 'w', tecla_izquierda = 'a', tecla_derecha = 'd'):
     '''Dada una cadena de caracteres ingresada por el usuario, actualiza la direccion en la que se mueve la vibora'''
@@ -80,14 +81,14 @@ def crear_tablero(ancho_tablero, alto_tablero):
     
     return tuple(tablero_vacio)
 
-def inicializar_tablero(fruta_fila, fruta_columna, vibora_fila, vibora_columna, tablero_vacio):
+def inicializar_tablero(fruta, vibora, tablero_vacio):
     tablero = [list(x) for x in tablero_vacio]
     for i in range(len(tablero)):
         for j in range(len(tablero[0])):
-            if i == fruta_fila and j == fruta_columna:
+            if i == fruta[0] and j == fruta[1]:
                 tablero[i][j] = 2
-        for k in range(len(vibora_fila)):
-            tablero[vibora_fila[k]][vibora_columna[k]] = 1
+        for k in range(len(vibora[0])):
+            tablero[vibora[0][k]][vibora[1][k]] = 1
     return tablero
             
 def imprimir_tablero(tablero):
@@ -121,8 +122,8 @@ def imprimir_mensaje_final(longitud_vibora, longitud_maxima):
     else:
         print('Seguí participando')
         
-def salio_del_tablero(vibora_fila, vibora_columna, ancho_tablero, alto_tablero):
-    if vibora_fila[len(vibora_fila)-1] < 0 or vibora_fila[len(vibora_fila)-1] >= alto_tablero or vibora_columna[len(vibora_fila)-1] < 0 or vibora_columna[len(vibora_fila)-1] >= ancho_tablero:
+def salio_del_tablero(vibora, ancho_tablero, alto_tablero):
+    if vibora[0][len(vibora[0])-1] < 0 or vibora[0][len(vibora[0])-1] >= alto_tablero or vibora[1][len(vibora[0])-1] < 0 or vibora[1][len(vibora[0])-1] >= ancho_tablero:
         return True
     return False
 
