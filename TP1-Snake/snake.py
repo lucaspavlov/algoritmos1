@@ -9,6 +9,8 @@ DT = 0.2 # paso temporal (en segundos) entre iteraciones, si es mas chico la vib
 TECLAS_DIRECCIONES = ('w', 's', 'a', 'd') # tupla con las cuatro direcciones posibles en la forma (arriba, abajo, izquierda, derecha)
 TECLA_PAUSA = 'p'
 TECLA_SALIR = 'q'
+SIMBOLO_VIBORA = '#'
+SIMBOLO_FRUTA = '*'
 
 def main():
     
@@ -30,7 +32,7 @@ def main():
             modificar_tablero(vibora, fruta, tablero)
             
             clear_terminal()
-            imprimir_tablero(tablero)
+            imprimir_tablero(tablero, SIMBOLO_VIBORA, SIMBOLO_FRUTA)
             
         p = pausa(input_usuario, p, TECLA_PAUSA)
     
@@ -143,7 +145,7 @@ def modificar_tablero(vibora, fruta, tablero):
         for k in range(len(vibora[0])):
             tablero[vibora[0][k]][vibora[1][k]] = 1
             
-def imprimir_tablero(tablero):
+def imprimir_tablero(tablero, simbolo_vibora, simbolo_fruta):
     '''Imprime el tablero en la pantalla'''
     ancho_tablero = len(tablero[0])
     for i in range(len(tablero)):
@@ -156,16 +158,16 @@ def imprimir_tablero(tablero):
                 if tablero[i][j] == 0:
                     print(' ', end = '')
                 elif tablero[i][j] == 1:
-                    print('#', end = '')
+                    print(simbolo_vibora, end = '')
                 elif tablero[i][j] == 2:
-                    print('*', end = '')
+                    print(simbolo_fruta, end = '')
             else:
                 if tablero[i][j] == 0:
                     print(' |')
                 elif tablero[i][j] == 1:
-                    print('#|')
+                    print(simbolo_vibora + '|')
                 elif tablero[i][j] == 2:
-                    print('*|') 
+                    print(simbolo_fruta + '|') 
         if i == len(tablero)-1:
             print('¯' * (ancho_tablero + 1))
             
@@ -197,6 +199,11 @@ assert len(TECLA_PAUSA) == 1, "La cadena que representa la tecla para poner o sa
 assert len(TECLAS_DIRECCIONES) == 4, "La tupla que contiene las teclas para mover a la vibora debe tener longitud 4."
 assert type(TECLA_SALIR) is str, "La variable TECLA_SALIR debe ser una cadena."
 assert type(TECLA_PAUSA) is str, "La variable TECLA_PAUSA debe ser una cadena."
+assert type(SIMBOLO_VIBORA) is str, "La variable SIMBOLO_VIBORA debe ser una cadena."
+assert type(SIMBOLO_FRUTA) is str, "La variable SIMBOLO_FRUTA debe ser una cadena."
+assert len(SIMBOLO_VIBORA) == 1, "La cadena que representa el símbolo de la vibora debe tener longitud 1."
+assert len(SIMBOLO_FRUTA) == 1, "La cadena que representa el símbolo de la fruta debe tener longitud 1."
+assert SIMBOLO_VIBORA != SIMBOLO_FRUTA, "Los símbolos de la víbora y de la fruta deben ser distintos."
 assert type(TECLAS_DIRECCIONES) is tuple, "La variable TECLAS_DIRECCIONES debe ser una tupla."
 assert type(TECLAS_DIRECCIONES[0]) is str, "Los elementos de TECLAS_DIRECCIONES deben ser cadenas de longitud 1."
 assert type(TECLAS_DIRECCIONES[1]) is str, "Los elementos de TECLAS_DIRECCIONES deben ser cadenas de longitud 1."
