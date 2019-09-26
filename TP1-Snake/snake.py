@@ -22,15 +22,12 @@ def main():
         if not p:
             direccion = actualizar_direccion(input_usuario, direccion, TECLAS_DIRECCIONES)
             
-            comio_fruta = actualizar_estado(vibora, direccion, fruta, TECLAS_DIRECCIONES)
-                    
-            if comio_fruta:
-                fruta = reubicar_fruta(vibora, ANCHO_TABLERO, ALTO_TABLERO)
-            
+            actualizar_estado(vibora, direccion, fruta, TECLAS_DIRECCIONES, ANCHO_TABLERO, ALTO_TABLERO)
+                        
             if se_mordio(vibora) or salir(input_usuario, TECLA_SALIR) or salio_del_tablero(vibora, ANCHO_TABLERO, ALTO_TABLERO): # quit
                 break
             
-            modificar_tablero(fruta, vibora, tablero)
+            modificar_tablero(vibora, fruta, tablero)
             
             clear_terminal()
             imprimir_tablero(tablero)
@@ -40,7 +37,7 @@ def main():
     imprimir_mensaje_final(len(vibora[0]), LONGITUD_MAXIMA)
 
 
-def actualizar_estado(vibora, direccion, fruta, teclas_direcciones):
+def actualizar_estado(vibora, direccion, fruta, teclas_direcciones, ancho_tablero, alto_tablero):
     '''Dadas las coordenadas de la vibora y de la fruta y la dirección en la que se está moviendo la vibora, devuelve dos booleanos, uno que indica si la vibora comio una fruta en ese movimiento, y otro que indica si se mordio a si misma'''
     if direccion == teclas_direcciones[0]:
         vibora[0].append(vibora[0][len(vibora[0])-1] - 1)
@@ -57,10 +54,8 @@ def actualizar_estado(vibora, direccion, fruta, teclas_direcciones):
     if vibora[0][len(vibora[0])-1] != fruta[0] or vibora[1][len(vibora[1])-1] != fruta[1]:
         vibora[0].pop(0)
         vibora[1].pop(0)
-        comio_fruta = False
     else:
-        comio_fruta = True
-    return comio_fruta
+        fruta[0:2] = reubicar_fruta(vibora, ancho_tablero, alto_tablero)
     
 
 def se_mordio(vibora):
@@ -137,7 +132,7 @@ def inicializar(ancho_tablero, alto_tablero):
     
     return tablero, fruta, vibora
 
-def modificar_tablero(fruta, vibora, tablero):
+def modificar_tablero(vibora, fruta, tablero):
     '''Modifica la lista tablero a partir de las coordenadas de la vibora y la posicion de la fruta'''
     for i in range(len(tablero)):
         for j in range(len(tablero[0])):
