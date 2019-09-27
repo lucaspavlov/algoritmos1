@@ -14,9 +14,9 @@ SIMBOLO_FRUTA = '*'
 
 def main():
     
-    tablero, fruta, vibora = inicializar(ANCHO_TABLERO, ALTO_TABLERO)
-    
-    direccion = TECLAS_DIRECCIONES[randrange(4)] # inicialmente va en una direccion aleatoria
+    tablero = crear_tablero(ANCHO_TABLERO, ALTO_TABLERO)
+
+    fruta, vibora, direccion = inicializar(ANCHO_TABLERO, ALTO_TABLERO, TECLAS_DIRECCIONES)
     
     p = False
     while len(vibora[0]) < LONGITUD_MAXIMA:
@@ -103,7 +103,7 @@ def salir(input_usuario, tecla_salir):
     return False
 
 def crear_tablero(ancho_tablero, alto_tablero):
-    '''Dado un ancho y alto del tablero, devuelve una tupla de tuplas llena de ceros, que representa al tablero vacío (sin vibora ni fruta)'''
+    '''Dado un ancho y alto del tablero, devuelve una lista de listas llena de ceros, que representa al tablero vacío (sin vibora ni fruta)'''
     fila = []
     for i in range(ancho_tablero):
         fila.append(0)
@@ -116,9 +116,20 @@ def crear_tablero(ancho_tablero, alto_tablero):
     tablero = [list(x) for x in tablero_vacio]
     return tablero
 
-def inicializar(ancho_tablero, alto_tablero):
-    '''Dadas las dimensiones del tablero, devuelve una lista de listas con ceros en todas las entradas que representa al tablero vacio, la posicion inicial de la vibora (en el centro del tablero) y la posición inicial de la fruta (en una posición aleatoria distinta del centro del tablero)'''
-    tablero = crear_tablero(ancho_tablero, alto_tablero)
+def crear_tablero_sintupla(ancho_tablero, alto_tablero):
+    '''Dado un ancho y alto del tablero, devuelve una lista de listas llena de ceros, que representa al tablero vacío (sin vibora ni fruta)'''
+    fila = []
+    for i in range(ancho_tablero):
+        fila.append(0)
+    
+    tablero_vacio = []
+    for j in range(alto_tablero):
+        tablero_vacio.append(fila)
+    
+    return tablero_vacio
+
+def inicializar(ancho_tablero, alto_tablero, teclas_direcciones):
+    '''Dadas las dimensiones del tablero y las direcciones posibles, devuelve la posicion inicial de la vibora (en el centro del tablero), la posición inicial de la fruta (en una posición aleatoria distinta del centro del tablero) y la dirección inicial en la que se mueve la vibora (que es aleatoria)'''
     
     fruta = []
     fruta.append(randrange(alto_tablero))
@@ -131,8 +142,10 @@ def inicializar(ancho_tablero, alto_tablero):
     
     if fruta[0] == vibora[0][0] and fruta[1] == vibora[1][0]: # en el caso de que la fruta caiga justo en la posicion inicial de la vibora, o sea en el centro del tablero
         fruta[0] += 1 # corro la fruta para que no coincida con la vibora inicialmente
+
+    direccion = teclas_direcciones[randrange(4)] # inicialmente va en una direccion aleatoria
     
-    return tablero, fruta, vibora
+    return fruta, vibora, direccion
 
 def modificar_tablero(vibora, fruta, tablero):
     '''Modifica la lista tablero a partir de las coordenadas de la vibora y la posicion de la fruta'''
