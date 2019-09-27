@@ -102,7 +102,7 @@ def salir(input_usuario, tecla_salir):
         return True
     return False
 
-def crear_tablero(ancho_tablero, alto_tablero):
+def crear_tablero_contupla(ancho_tablero, alto_tablero):
     '''Dado un ancho y alto del tablero, devuelve una lista de listas llena de ceros, que representa al tablero vacío (sin vibora ni fruta)'''
     fila = []
     for i in range(ancho_tablero):
@@ -116,6 +116,7 @@ def crear_tablero(ancho_tablero, alto_tablero):
     tablero = [list(x) for x in tablero_vacio]
     return tablero
 
+
 def crear_tablero_sintupla(ancho_tablero, alto_tablero):
     '''Dado un ancho y alto del tablero, devuelve una lista de listas llena de ceros, que representa al tablero vacío (sin vibora ni fruta)'''
     fila = []
@@ -126,6 +127,17 @@ def crear_tablero_sintupla(ancho_tablero, alto_tablero):
     for j in range(alto_tablero):
         tablero_vacio.append(fila)
     
+    return tablero_vacio
+
+def crear_tablero(ancho_tablero, alto_tablero):
+    '''Dado un ancho y alto del tablero, devuelve una lista de listas llena de ceros, que representa al tablero vacío (sin vibora ni fruta)'''
+    tablero_vacio = []
+    for j in range(alto_tablero):    
+        fila = []
+        for i in range(ancho_tablero):
+            fila.append(0)
+        tablero_vacio.append(fila)
+
     return tablero_vacio
 
 def inicializar(ancho_tablero, alto_tablero, teclas_direcciones):
