@@ -41,24 +41,21 @@ def main():
 
 def actualizar_estado(vibora, direccion, fruta, teclas_direcciones, ancho_tablero, alto_tablero):
     '''Dadas las coordenadas de la vibora y de la fruta y la dirección en la que se está moviendo la vibora, devuelve dos booleanos, uno que indica si la vibora comio una fruta en ese movimiento, y otro que indica si se mordio a si misma'''
-    if direccion == teclas_direcciones[0]:
-        vibora[0].append(vibora[0][len(vibora[0])-1] - 1)
-        vibora[1].append(vibora[1][len(vibora[1])-1])
-    if direccion == teclas_direcciones[1]:
-        vibora[0].append(vibora[0][len(vibora[0])-1] + 1)
-        vibora[1].append(vibora[1][len(vibora[1])-1])
-    if direccion == teclas_direcciones[2]:
-        vibora[0].append(vibora[0][len(vibora[0])-1])
-        vibora[1].append(vibora[1][len(vibora[1])-1] - 1)
-    if direccion == teclas_direcciones[3]:
-        vibora[0].append(vibora[0][len(vibora[0])-1])
-        vibora[1].append(vibora[1][len(vibora[1])-1] + 1)
+    movimientos_posibles = ((-1, 0), (1, 0), (0, -1), (0, 1))
+    indice_direccion = teclas_direcciones.index(direccion)
+    movimiento = movimientos_posibles[indice_direccion]
+    
+    vibora[0].append(vibora[0][len(vibora[0])-1] + movimiento[0])
+    vibora[1].append(vibora[1][len(vibora[1])-1] + movimiento[1])
+    
     if vibora[0][len(vibora[0])-1] != fruta[0] or vibora[1][len(vibora[1])-1] != fruta[1]:
         vibora[0].pop(0)
         vibora[1].pop(0)
     else:
         fruta[0:2] = reubicar_fruta(vibora, ancho_tablero, alto_tablero)
     
+def comio_fruta(vibora, fruta):
+    return vibora[0][len(vibora[0])-1] == fruta[0] and vibora[1][len(vibora[1])-1] == fruta[1]
 
 def se_mordio(vibora):
     '''Dadas las coordenadas de la vibora, devuelve True si se mordio a si misma o False si no'''
