@@ -14,27 +14,21 @@ SIMBOLO_FRUTA = '*'
 def main():
     
     tablero = crear_tablero(DIMENSIONES_TABLERO)
-
     fruta, vibora, direccion = inicializar(DIMENSIONES_TABLERO, TECLAS_DIRECCIONES)
     
     p = False
-    while len(vibora) < LONGITUD_MAXIMA:
+    input_usuario = ''
+    
+    while len(vibora) < LONGITUD_MAXIMA and not salir(input_usuario, TECLA_SALIR):
         input_usuario = timed_input(DT)
         if not p:
             direccion = actualizar_direccion(input_usuario, direccion, TECLAS_DIRECCIONES)
-                        
-            avanzar_cabeza(vibora, direccion, TECLAS_DIRECCIONES)
-            
-            if comio_fruta(vibora[-1], fruta):
-                reubicar_fruta(vibora, fruta, DIMENSIONES_TABLERO)
-            else:
-                avanzar_cola(vibora)
+            juego(vibora, fruta, direccion, TECLAS_DIRECCIONES, DIMENSIONES_TABLERO)
                 
-            if se_mordio(vibora) or salir(input_usuario, TECLA_SALIR) or salio_del_tablero(vibora, DIMENSIONES_TABLERO): # quit
+            if perdio(vibora, DIMENSIONES_TABLERO):
                 break
             
             modificar_tablero(vibora, fruta, tablero)
-            
             clear_terminal()
             imprimir_tablero(tablero, SIMBOLO_VIBORA, SIMBOLO_FRUTA)
             
@@ -42,19 +36,77 @@ def main():
     
     imprimir_mensaje_final(len(vibora), LONGITUD_MAXIMA)
 
+def main_sin_adiciones():
+    '''Jugar a la viborita sin poder salir (salvo que se pierda) o poner pausa'''    
+    tablero = crear_tablero(DIMENSIONES_TABLERO)
+    fruta, vibora, direccion = inicializar(DIMENSIONES_TABLERO, TECLAS_DIRECCIONES)
+    
+    while len(vibora) < LONGITUD_MAXIMA:
+        direccion = actualizar_direccion(timed_input(DT), direccion, TECLAS_DIRECCIONES)                        
+        juego(vibora, fruta, direccion, TECLAS_DIRECCIONES, DIMENSIONES_TABLERO)
+                
+        if perdio(vibora, DIMENSIONES_TABLERO):
+            break
+            
+        modificar_tablero(vibora, fruta, tablero)
+        clear_terminal()
+        imprimir_tablero(tablero, SIMBOLO_VIBORA, SIMBOLO_FRUTA)
+            
+    imprimir_mensaje_final(len(vibora), LONGITUD_MAXIMA)
+    
+def main_con_pausa_sin_salir():
+    '''Jugar a la viborita sin poder salir salvo perdiendo, pero se puede poner pausa'''    
+    tablero = crear_tablero(DIMENSIONES_TABLERO)
+    fruta, vibora, direccion = inicializar(DIMENSIONES_TABLERO, TECLAS_DIRECCIONES)
+    
+    p = False
+    
+    while len(vibora) < LONGITUD_MAXIMA:
+        if not p:
+            input_usuario = timed_input(DT)
+            direccion = actualizar_direccion(input_usuario, direccion, TECLAS_DIRECCIONES)                        
+            juego(vibora, fruta, direccion, TECLAS_DIRECCIONES, DIMENSIONES_TABLERO)
+                    
+            if perdio(vibora, DIMENSIONES_TABLERO):
+                break
+                
+            modificar_tablero(vibora, fruta, tablero)
+            clear_terminal()
+            imprimir_tablero(tablero, SIMBOLO_VIBORA, SIMBOLO_FRUTA)
+        
+        p = pausa(input_usuario, p, TECLA_PAUSA)
+            
+    imprimir_mensaje_final(len(vibora), LONGITUD_MAXIMA)
+
+def juego(vibora, fruta, direccion, TECLAS_DIRECCIONES, DIMENSIONES_TABLERO):
+    avanzar_cabeza(vibora, direccion, TECLAS_DIRECCIONES)
+            
+    if comio_fruta(vibora, fruta):
+        reubicar_fruta(vibora, fruta, DIMENSIONES_TABLERO)
+    else:
+        avanzar_cola(vibora)
+
+def perdio(vibora, DIMENSIONES_TABLERO):
+    '''
+    Devuelve True si el usuario perdio (ya sea porque se comio a si mismo o
+    porque la vibora salio del tablero) y False en caso contrario
+    '''
+    return se_mordio(vibora) or salio_del_tablero(vibora, DIMENSIONES_TABLERO)
 
 def avanzar_cabeza(vibora, direccion, teclas_direcciones):
-    '''Dadas las coordenadas de la vibora y de la fruta y la dirección en la que se está moviendo la vibora, devuelve dos booleanos, uno que indica si la vibora comio una fruta en ese movimiento, y otro que indica si se mordio a si misma'''
+    '''Dadas las coordenadas de la vibora, la dirección en la que se está moviendo y la tupla de posibles direcciones, alarga la vibora en la dirección del movimiento'''
     movimientos_posibles = ((-1, 0), (1, 0), (0, -1), (0, 1))
     indice_direccion = teclas_direcciones.index(direccion)
     movimiento = movimientos_posibles[indice_direccion]
     vibora.append((vibora[-1][0] + movimiento[0], vibora[-1][1] + movimiento[1]))
 
 def avanzar_cola(vibora):
+    '''Dada la lista que representa a la vibora, le borra el último elemento, lo que tiene el efecto de un avance de la cola de la vibora'''
     vibora.pop(0)    
 
-def comio_fruta(cabeza_vibora, fruta):
-    return cabeza_vibora == tuple(fruta)
+def comio_fruta(vibora, fruta):
+    '''Dadas las coordenadas de la cabeza de la vibora y de la fruta, devuelve True si la vibora se comió a la fruta o False en caso contrario'''
+    return vibora[-1] == tuple(fruta)
 
 def se_mordio(vibora):
     '''Dadas las coordenadas de la vibora, devuelve True si se mordio a si misma o False si no'''
@@ -72,7 +124,11 @@ def reubicar_fruta(vibora, fruta, dimensiones_tablero):
     
 
 def actualizar_direccion(input_usuario, direccion_actual, teclas_direcciones):
-    '''Dada una cadena de caracteres ingresada por el usuario, actualiza la direccion en la que se mueve la vibora'''
+    '''
+    Dada una cadena de caracteres ingresada por el usuario, actualiza la 
+    direccion en la que se mueve la vibora. Si la vibora se mueve en una dirección
+    vertical solamente permite cambiar a una dirección horizontal y viceversa
+    '''
     if direccion_actual in teclas_direcciones[0:2]:
         teclas_posibles = teclas_direcciones[2] + teclas_direcciones[3]
     else:
@@ -83,14 +139,20 @@ def actualizar_direccion(input_usuario, direccion_actual, teclas_direcciones):
     return direccion_actual
 
 def pausa(input_usuario, pausa_activada, tecla_pausa):
-    '''Función que recibe la cadena ingresada por el usuario y el estado actual del programa (en pausa o no como booleano, True o False). Si el usuario apretó la tecla de pausa, devuelve False si el juego estaba en pausa o True si no lo estaba'''
+    '''
+    Función que recibe la cadena ingresada por el usuario y el estado actual
+    del programa (en pausa o no como booleano, True o False). Si el usuario 
+    apretó la tecla de pausa, devuelve False si el juego estaba en pausa o 
+    True si no lo estaba
+    '''
     for c in input_usuario:
         if c == tecla_pausa:
             return not pausa_activada
     return pausa_activada
 
 def salir(input_usuario, tecla_salir):
-    '''Función que recibe la entrada del usuario y devuelve True si el usuario apretó la tecla para salir del juego o False en caso contrario'''
+    '''Función que recibe la entrada del usuario y devuelve True si el usuario 
+    apretó la tecla para salir del juego o False en caso contrario'''
     return tecla_salir in input_usuario
 
 def crear_tablero_contupla(ancho_tablero, alto_tablero):
@@ -121,7 +183,8 @@ def crear_tablero_sintupla(ancho_tablero, alto_tablero):
     return tablero_vacio
 
 def crear_tablero(dimensiones_tablero):
-    '''Dado un ancho y alto del tablero, devuelve una lista de listas llena de ceros, que representa al tablero vacío (sin vibora ni fruta)'''
+    '''Dado un ancho y alto del tablero, devuelve una lista de listas llena de 
+    ceros, que representa al tablero vacío (sin vibora ni fruta)'''
     tablero_vacio = []
     for j in range(dimensiones_tablero[1]):    
         fila = []
@@ -131,18 +194,35 @@ def crear_tablero(dimensiones_tablero):
 
     return tablero_vacio
 
+def crear_tablero_fila(dimensiones_tablero):
+    '''Dado un ancho y alto del tablero, devuelve una lista de listas llena de 
+    ceros, que representa al tablero vacío (sin vibora ni fruta)'''
+    tablero_vacio = []
+    fila = []
+    for i in range(dimensiones_tablero[0]):
+        fila.append(0)
+    
+    for j in range(dimensiones_tablero[1]):
+        tablero_vacio.append(fila)
+
+    return tablero_vacio
+
+
 def inicializar(dimensiones_tablero, teclas_direcciones):
-    '''Dadas las dimensiones del tablero y las direcciones posibles, devuelve la posicion inicial de la vibora (en el centro del tablero), la posición inicial de la fruta (en una posición aleatoria distinta del centro del tablero) y la dirección inicial en la que se mueve la vibora (que es aleatoria)'''
+    '''
+    Dadas las dimensiones del tablero y las direcciones posibles, devuelve 
+    la posicion inicial de la vibora (en el centro del tablero), la posición 
+    inicial de la fruta (en una posición aleatoria distinta del centro del tablero)
+    y la dirección inicial en la que se mueve la vibora (que es aleatoria)'''
     
     fruta = []
     fruta.append(randrange(dimensiones_tablero[1]))
     fruta.append(randrange(dimensiones_tablero[0]))
     
-    # coloco inicialmente a la vibora en el centro del tablero
     vibora = []
     vibora.append((int(dimensiones_tablero[1]/2), int(dimensiones_tablero[0]/2)))
     
-    if fruta == vibora[0]:# en el caso de que la fruta caiga justo en la posicion inicial de la vibora, o sea en el centro del tablero
+    if tuple(fruta) in vibora:
         fruta[0] += 1 # corro la fruta para que no coincida con la vibora inicialmente
 
     direccion = teclas_direcciones[randrange(4)] # inicialmente va en una direccion aleatoria
@@ -150,26 +230,29 @@ def inicializar(dimensiones_tablero, teclas_direcciones):
     return fruta, vibora, direccion
 
 def modificar_tablero(vibora, fruta, tablero):
-    '''Modifica la lista tablero a partir de las coordenadas de la vibora y la posicion de la fruta'''
+    '''
+    Modifica la lista de listas tablero a partir de las coordenadas de la vibora
+    y la posicion de la fruta. La posición en la cual se encuentra la fruta se
+    representa con un número 2, las posiciones en las cuales se encuentra la vibora
+    se representan con un número 1, y las restantes con un cero
+    '''
     for i in range(len(tablero)):
         for j in range(len(tablero[0])):
-            if i == fruta[0] and j == fruta[1]:
-                tablero[i][j] = 2
-            else:
-                tablero[i][j] = 0
-        for k in range(len(vibora)):
-            tablero[vibora[k][0]][vibora[k][1]] = 1
+            tablero[i][j] = int([i, j] == fruta) * 2
+        for i, j in vibora:
+            tablero[i][j] = 1
             
 def imprimir_tablero(tablero, simbolo_vibora, simbolo_fruta):
     '''Imprime el tablero en la pantalla'''
+    alto_tablero = len(tablero)
     ancho_tablero = len(tablero[0])
-    for i in range(len(tablero)):
+    for i in range(alto_tablero):
         if i == 0:
             print('_' * (ancho_tablero + 1))
-        for j in range(len(tablero[0])):
+        for j in range(ancho_tablero):
             if j == 0:
                 print('|', end = '')
-            if j < len(tablero[0]) - 1:
+            if j < ancho_tablero - 1:
                 if tablero[i][j] == 0:
                     print(' ', end = '')
                 elif tablero[i][j] == 1:
@@ -183,7 +266,7 @@ def imprimir_tablero(tablero, simbolo_vibora, simbolo_fruta):
                     print(simbolo_vibora + '|')
                 elif tablero[i][j] == 2:
                     print(simbolo_fruta + '|') 
-        if i == len(tablero)-1:
+        if i == alto_tablero - 1:
             print('¯' * (ancho_tablero + 1))
             
 def imprimir_mensaje_final(longitud_vibora, longitud_maxima):
@@ -191,13 +274,11 @@ def imprimir_mensaje_final(longitud_vibora, longitud_maxima):
     if longitud_vibora == longitud_maxima:
         print('Felicitaciones !')
     else:
-        print('Seguí participando')
+        print('Buena suerte en el próximo intento.')
         
 def salio_del_tablero(vibora, dimensiones_tablero):
-    '''Dadas las coordenadas de la vibora y las dimensiones del tablero, devuelve True si la vibora salio del tablero o False en caso contrario'''
-    if vibora[-1][0] < 0 or vibora[-1][0] >= dimensiones_tablero[1] or vibora[-1][1] < 0 or vibora[-1][1] >= dimensiones_tablero[0]:
-        return True
-    return False
+    '''Dadas las coordenadas de la cabeza de la vibora y las dimensiones del tablero, devuelve True si la vibora salio del tablero o False en caso contrario'''
+    return vibora[-1][0] < 0 or vibora[-1][0] >= dimensiones_tablero[1] or vibora[-1][1] < 0 or vibora[-1][1] >= dimensiones_tablero[0]
 
 assert TECLA_PAUSA not in TECLAS_DIRECCIONES, "La tecla de pausa no puede coincidir con alguna de las teclas que mueven a la vibora."
 assert TECLA_SALIR not in TECLAS_DIRECCIONES, "La tecla para salir del juego no puede coincidir con alguna de las teclas que mueven a la vibora."
