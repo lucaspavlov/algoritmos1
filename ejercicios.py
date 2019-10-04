@@ -1190,3 +1190,54 @@ def filtrar(f, lista):
         if f(elemento) == True:
             lista_filtrada.append(elemento)
     return lista_filtrada
+
+# Ejercicio 8.1
+
+def contar_elementos(lista, elem):
+    '''Dada una lista y un elemento, devuelve la cantidad de elementos identicos al pedido que hay en la lista'''
+    c = 0
+    for elemento in lista:
+        if elemento == elem:
+            c += 1
+    return c
+
+def posicion_primera_coincidencia(lista, elem):
+    '''Dada una lista y un elemento, devuelve el indice del primer elemento de la lista igual al elemento pedido. Si no hay ninguna coincidencia devuelve -1'''
+    for i, elemento in enumerate(lista):
+        if elemento == elem:
+            return i
+    return -1
+
+def posiciones_coincidencias(lista, elem):
+    '''Dada una lista y un elemento, devuelve las posiciones de la lista en los cuales el elemento de la lista es igual al elemento pasado como segundo argumento de la funcion'''
+    indice_lista_original = 0
+    posiciones = []
+    l = len(lista)
+    c = 0
+    while indice_lista_original < l-1 and len(lista) > 0:
+        indice = posicion_primera_coincidencia(lista, elem)
+        if indice == -1:
+            return posiciones
+        indice_lista_original += indice + min(len(posiciones), 1) # es cero para la primera y 1 para las restantes
+        posiciones.append(indice_lista_original)
+        lista = lista[indice + 1:]
+    return posiciones
+
+# Ejercicio 8.2
+    
+def maximo(lista):
+    '''Devuelve el valor maximo de una lista de numeros'''
+    maximo = lista[0]
+    for elemento in lista:
+        maximo = max(maximo, elemento)
+    return maximo
+
+def maximo_y_ubicacion(lista):
+    '''Dada una lista de numeros, devuelve el valor maximo y su indice. Si el maximo se repite devuelve el indice de la primera aparicion.'''
+    maximo = lista[0]
+    indice = 0
+    for i, elemento in enumerate(lista):
+        if elemento > maximo:
+            maximo = elemento
+            indice = i
+    return (maximo, indice)
