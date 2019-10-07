@@ -1241,3 +1241,72 @@ def maximo_y_ubicacion(lista):
             maximo = elemento
             indice = i
     return (maximo, indice)
+
+
+# Ejercicio 8.3
+    
+def agenda_simplificada(cadena, agenda):
+    coincidencias = []
+    for nombre_completo, telefono in agenda:
+        if cadena in nombre_completo:
+            coincidencias.append((nombre_completo, telefono))
+    return coincidencias
+
+# Ejercicio 10.1
+    
+def head(archivo, N):
+    '''Dado un archivo y un numero n, imprime las primeras N lineas del archivo'''
+    for i in range(N):
+        print(archivo.readline())
+
+def leer_todo(archivo):
+    '''Dado un archivo imprime todas sus lineas'''
+    linea = archivo.readline()
+    while linea != '':
+        print(linea)
+        linea = archivo.readline()
+        
+def leer_todo_v2(archivo):
+    print(archivo.read())
+    
+def cp(direccion_fuente, direccion_destino):
+    '''Dada la direccion de un archivo (de texto o de bytes) y una direccion de destino, copia el archivo original en la direccion de destino'''
+    archivo_destino = open(direccion_destino, 'wb')
+    with open(direccion_fuente, 'rb') as archivo_fuente:
+        archivo_destino.write(archivo_fuente.read())
+    archivo_destino.close()
+
+def wc(archivo):
+    '''Dado un archivo de texto, imprime por pantalla la cantidad de lineas, palabras y caracteres que contiene'''
+    lineas = 0
+    palabras = 0
+    caracteres = 0
+    linea = archivo.readline()
+    while linea != '':
+        lineas += 1
+        palabras += len(linea.split())
+        caracteres = len(linea)
+        linea = archivo.readline()
+    print('El archivo contiene {} lineas, {} palabras y {} caracteres'.format(lineas, palabras, caracteres))
+
+
+def grep(cadena, archivo):
+    '''Dada una cadena y un archivo, imprime las lineas del archivo que contienen la cadena'''
+    linea = archivo.readline()
+    while linea != '':
+        if cadena in linea:
+            print(linea)
+        linea = archivo.readline()
+
+def rot13(direccion_origen, direccion_destino): # no parece funcionar, preguntar
+    '''Dada la direccion de un archivo de texto y una direccion de destino, guarda una version cifrada del archivo de origen en la direccion de destinoo'''
+    with open(direccion_origen, 'r') as archivo_origen:
+        texto = archivo_origen.read()
+    texto_cifrado = ''
+    for caracter in texto:
+            #caracter = archivo_origen.read(1)
+        caracter_cifrado = chr((ord(caracter) + 13) % 26)
+        texto_cifrado += caracter_cifrado
+    with open(direccion_destino, 'w') as archivo_destino:
+        archivo_destino.write(texto_cifrado)
+
