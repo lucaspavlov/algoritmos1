@@ -13,7 +13,7 @@ def main():
     Flujo principal del juego snake.
     '''
     
-    fruta, vibora, direccion = inicializar()
+    vibora, fruta, direccion = estado_inicial()
     
     snake(vibora, fruta, direccion)
 
@@ -41,7 +41,7 @@ def snake(vibora, fruta, direccion):
         imprimir_comandos()
         imprimir_avance(len(vibora))
 
-def inicializar():
+def estado_inicial():
     '''
     Dadas las dimensiones del tablero y los caracteres utilizados para mover a la vibora, devuelve 
     la posicion inicial de la vibora (en el centro del tablero), la posición 
@@ -49,19 +49,30 @@ def inicializar():
     y la dirección inicial en la que se mueve la vibora (que es aleatoria).
     '''
 
+    vibora = crear_vibora()
+    
+    fruta = crear_fruta(vibora)   
+
+    direccion = TECLAS_DIRECCIONES[randrange(4)]
+    
+    return vibora, fruta, direccion
+    
+def crear_vibora():
+    vibora = []
+    vibora.append((int(DIMENSIONES_TABLERO[1]/2), int(DIMENSIONES_TABLERO[0]/2)))
+    return vibora
+    
+
+def crear_fruta(vibora):
     fruta = []
     fruta.append(randrange(DIMENSIONES_TABLERO[1]))
     fruta.append(randrange(DIMENSIONES_TABLERO[0]))
     
-    vibora = []
-    vibora.append((int(DIMENSIONES_TABLERO[1]/2), int(DIMENSIONES_TABLERO[0]/2)))
-    
     if tuple(fruta) in vibora:
         fruta[0] += 1 # corro la fruta para que no coincida con la vibora inicialmente
-
-    direccion = TECLAS_DIRECCIONES[randrange(4)]
     
-    return fruta, vibora, direccion
+    return fruta
+
 
 def actualizar_direccion(input_usuario, direccion_actual):
     '''
