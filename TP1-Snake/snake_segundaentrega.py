@@ -33,7 +33,7 @@ def main():
         modificar_tablero(vibora, fruta, tablero)
 
         clear_terminal()
-        imprimir_tablero(vibora, fruta, DIMENSIONES_TABLERO, simbolo_vibora, simbolo_fruta)
+        imprimir_tablero(vibora, fruta, DIMENSIONES_TABLERO, SIMBOLO_VIBORA, SIMBOLO_FRUTA)
         imprimir_comandos(TECLAS_DIRECCIONES)
         imprimir_avance(len(vibora), LONGITUD_MAXIMA)
 
