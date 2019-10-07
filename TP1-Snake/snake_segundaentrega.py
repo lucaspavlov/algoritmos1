@@ -10,18 +10,24 @@ SIMBOLO_FRUTA = '*'
 
 def main():
     '''
-    Flujo principal del juego snake. La vibora se mueve hacia 
+    Flujo principal del juego snake.
+    '''
+    
+    fruta, vibora, direccion = inicializar()
+    
+    snake(vibora, fruta, direccion)
+
+    imprimir_mensaje_final(len(vibora))
+
+def snake(vibora, fruta, direccion):
+    '''Funcion principal del juego snake. La vibora se mueve hacia 
     arriba, abajo, izquierda o derecha usando cuatro teclas del teclado, 
     especificadas en TECLAS_DIRECCIONES. Hay una fruta en la zona de juego 
     y cuando la vibora la come, la fruta aparece en otra posición y la longitud
     de la vibora se incrementa en una unidad. El juego termina cuando la longitud 
     de la vibora alcanza el valor prefijado LONGITUD_MAXIMA (en cuyo caso 
     el usuario gana), o si la vibora se come a si misma o sale del tablero, 
-    en cuyo caso el usuario pierde.
-    '''
-    
-    fruta, vibora, direccion = inicializar()
-    
+    en cuyo caso el usuario pierde.'''
     while len(vibora) < LONGITUD_MAXIMA:
 
         direccion = actualizar_direccion(timed_input(DT), direccion)                        
@@ -29,13 +35,11 @@ def main():
                 
         if perdio(vibora):
             break
-            
+                
         clear_terminal()
         imprimir_tablero(vibora, fruta)
         imprimir_comandos()
         imprimir_avance(len(vibora))
-
-    imprimir_mensaje_final(len(vibora))
 
 def inicializar():
     '''
