@@ -51,19 +51,22 @@ def estado_inicial():
 
     vibora = crear_vibora()
     
-    fruta = crear_fruta(vibora)   
+    fruta = crear_fruta_v2(vibora)   
 
     direccion = TECLAS_DIRECCIONES[randrange(4)]
     
     return vibora, fruta, direccion
     
 def crear_vibora():
+    '''Crea a la vibora como una lista con una tupla de dos elementos (que son
+    las coordenadas x e y de la vibora), inicialmente en el centro del tablero.'''
     vibora = []
     vibora.append((int(DIMENSIONES_TABLERO[1]/2), int(DIMENSIONES_TABLERO[0]/2)))
     return vibora
     
 
 def crear_fruta(vibora):
+    '''Crea a la fruta en una posición aleatoria que no coincida con la vibora.'''
     fruta = []
     fruta.append(randrange(DIMENSIONES_TABLERO[1]))
     fruta.append(randrange(DIMENSIONES_TABLERO[0]))
@@ -73,6 +76,12 @@ def crear_fruta(vibora):
     
     return fruta
 
+def crear_fruta_v2(vibora):
+    '''Crea a la fruta en una posición aleatoria que no coincida con la vibora.'''
+    while True:
+        fruta = (randrange(DIMENSIONES_TABLERO[1]), randrange(DIMENSIONES_TABLERO[0]))
+        if fruta not in vibora:
+            return fruta
 
 def actualizar_direccion(input_usuario, direccion_actual):
     '''
@@ -100,7 +109,7 @@ def juego(vibora, fruta, direccion):
     avanzar_cabeza(vibora, direccion)
             
     if comio_fruta(vibora, fruta):
-        reubicar_fruta(vibora, fruta)
+        fruta = crear_fruta_v2(vibora)
     else:
         avanzar_cola(vibora)
 
@@ -150,27 +159,37 @@ def salio_del_tablero(vibora):
     '''
     cabeza_vibora = vibora[-1]
     return -1 in cabeza_vibora or cabeza_vibora[0] == DIMENSIONES_TABLERO[1] or cabeza_vibora[1] == DIMENSIONES_TABLERO[0]
-    
-def imprimir_tablero(vibora, fruta):
+
+def crear_tablero_vacio(DIMENSIONES_TABLERO):
+    '''Dadas las dimensiones del tablero especificadas en una tupla en la forma (ancho, alto), 
+    devuelve una lista de listas que representa una matriz de ancho x alto con ceros en todas las entradas
     '''
-    Imprime el tablero en la pantalla. Donde no hay vibora ni fruta imprime un espacio,
-    y donde hay vibora o fruta imprime el caracter correspondiente.
-    '''
-    alto_tablero = DIMENSIONES_TABLERO[1]
-    ancho_tablero = DIMENSIONES_TABLERO[0]
-    simbolos_imprimir = (' ', SIMBOLO_VIBORA, SIMBOLO_FRUTA)
-    
-    tablero = []
-    for j in range(alto_tablero):    
+    tablero_vacio = []
+    for j in range(DIMENSIONES_TABLERO[1]):    
         fila = []
-        for i in range(ancho_tablero):
+        for i in range(DIMENSIONES_TABLERO[0]):
             fila.append(0)
-        tablero.append(fila)
-    
+        tablero_vacio.append(fila)
+    return tablero_vacio
+
+def modificar_tablero(tablero_vacio, vibora, fruta):
+    '''Dada la matriz que representa al tablero vacio, la modifica 
+    poniendo 1 en cada posicion en la que esté la vibora y 2 en la posición en donde está la fruta
+    '''
     tablero[fruta[0]][fruta[1]] = 2
     
     for i, j in vibora:
         tablero[i][j] = 1
+
+def imprimir_tablero(tablero):
+    '''Dado el tablero como matriz con 0s donde no hay nada, 
+    1s donde está la vibora y 2 en la posición de la fruta,
+    imprime el tablero en la pantalla usando los simbolos
+    especificados como constantes globales.
+    '''
+    alto_tablero = len(tablero)
+    ancho_tablero = len(tablero[0])
+    simbolos_imprimir = (' ', SIMBOLO_VIBORA, SIMBOLO_FRUTA)
     
     for i in range(alto_tablero):
         if i == 0:
@@ -184,6 +203,15 @@ def imprimir_tablero(vibora, fruta):
                 print(simbolos_imprimir[tablero[i][j]] + '|')
         if i == alto_tablero - 1:
             print('¯' * (ancho_tablero + 2))
+        
+def imprimir_juego(vibora, fruta):
+    '''
+    Imprime el tablero en la pantalla. Donde no hay vibora ni fruta imprime un espacio,
+    y donde hay vibora o fruta imprime el caracter correspondiente.
+    '''    
+    tablero = crear_tablero_vacio(DIMENSIONES_TABLERO)
+    modificar_tablero(tablero, vibora, fruta)
+    imprimir(tablero)
 
 def imprimir_comandos():
     '''Imprime las teclas que se usan para mover a la vibora.'''
