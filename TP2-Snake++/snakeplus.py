@@ -9,26 +9,25 @@ TECLAS_DIRECCIONES = ('w', 's', 'a', 'd') # tupla con las cuatro direcciones pos
 SIMBOLO_VIBORA = '#'
 SIMBOLO_FRUTA = '*'
 SIMBOLO_OBSTACULOS = '!'
-NIVELES = 3
+NIVELES = 2
 
 def main():
     '''
     Flujo principal del juego snake.
     '''
     lineas_especiales = leer_especiales()
-    snake(lineas_especiales)
-
-    #imprimir_mensaje_final(len(vibora))
+    nivel_alcanzado = snake(lineas_especiales)
+    imprimir_mensaje_final(nivel_alcanzado)
 
 def snake(lineas_especiales):
     nivel = 1
-    while nivel < NIVELES:
+    while nivel <= NIVELES:
         caracteristicas_nivel = leer_nivel(nivel)
         if jugar_nivel(caracteristicas_nivel, lineas_especiales):
             nivel += 1
         else:
-            print('Perdiste')
             break
+    return nivel
 
 def jugar_nivel(caracteristicas_nivel, lineas_especiales):
     '''
@@ -372,10 +371,10 @@ def imprimir_mochila(mochila):
         print('     ||   ' + valor[1][2], end = '')
         print('   || ' + valor[1][3])
 
-def imprimir_mensaje_final(longitud_vibora):
+def imprimir_mensaje_final(nivel_alcanzado):
     '''Imprime el mensaje final al usuario'''
     print() # para dejar un espacio
-    if longitud_vibora == LONGITUD_MAXIMA:
+    if nivel_alcanzado > NIVELES:
         print('Ganaste, felicitaciones!!!')
     else:
         print('Buena suerte en el próximo intento...')
