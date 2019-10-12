@@ -9,6 +9,7 @@ TECLAS_DIRECCIONES = ('w', 's', 'a', 'd') # tupla con las cuatro direcciones pos
 SIMBOLO_VIBORA = '#'
 SIMBOLO_FRUTA = '*'
 SIMBOLO_OBSTACULOS = '!'
+NIVELES = 3
 
 def main():
     '''
@@ -16,16 +17,23 @@ def main():
     '''
 
     mochila = crear_mochila(leer_especiales())
-    nivel = 1
-    vibora, fruta, direccion, obstaculos, especiales, especial, tipo_especial = estado_inicial(nivel)
+    nivel_inicial = 1
+    snake(nivel_inicial, mochila)
 
-    resetear_mochila(mochila)
+    #imprimir_mensaje_final(len(vibora))
 
-    snake(vibora, fruta, direccion, obstaculos, mochila, especiales, especial, tipo_especial)
+def snake(nivel_inicial, mochila):
+    nivel = nivel_inicial
+    while nivel < NIVELES:
+        caracteristicas_nivel = leer_nivel(nivel)
+        if jugar_nivel(caracteristicas_nivel, mochila):
+            nivel += 1
+            resetear_mochila(mochila)
+        else:
+            print('Perdiste')
+            break
 
-    imprimir_mensaje_final(len(vibora))
-
-def snake(vibora, fruta, direccion, obstaculos, mochila, especiales, especial, tipo_especial):
+def jugar_nivel(caracteristicas_nivel, mochila):
     '''
     Funcion principal del juego snake. La vibora se mueve hacia
     arriba, abajo, izquierda o derecha usando cuatro teclas del teclado,
@@ -37,32 +45,34 @@ def snake(vibora, fruta, direccion, obstaculos, mochila, especiales, especial, t
     el usuario gana), o si la vibora se come a si misma o sale del tablero,
     en cuyo caso el usuario pierde.
     '''
-    while len(vibora) < LONGITUD_MAXIMA:
+    longitud_maxima, dt, dimensiones_tablero, obstaculos, especiales = caracteristicas_nivel
+    vibora, fruta, direccion, especial = estado_inicial(dimensiones_tablero, obstaculos, especiales)
+    while len(vibora) < longitud_maxima:
 
-        direccion = actualizar_direccion(timed_input(DT), direccion)
+        direccion = actualizar_direccion(timed_input(dt), direccion)
 
         avanzar_cabeza(vibora, direccion)
 
-        if comio(vibora, fruta):
-            reubicar(vibora, obstaculos, especial, fruta)
+        if comio_fruta(vibora, fruta):
+            reubicar_fruta(vibora, obstaculos, especial, fruta, dimensiones_tablero)
         else:
             avanzar_cola(vibora)
 
-        if comio(vibora, especial):
-            agregar_a_mochila(mochila, tipo_especial)
-            reubicar(vibora, obstaculos, fruta, especial)
-            tipo_especial = nuevo_especial(especiales)
+        if comio_especial(vibora, especial):
+            agregar_a_mochila(mochila, especial)
+            reubicar_especial(vibora, obstaculos, fruta, especial, especiales, dimensiones_tablero)
 
-        if perdio(vibora, obstaculos):
-            break
+        if perdio(vibora, obstaculos, dimensiones_tablero):
+            return False
 
         clear_terminal()
-        imprimir_tablero(vibora, fruta, obstaculos, especial, tipo_especial)
+        imprimir_tablero(vibora, fruta, obstaculos, especial, dimensiones_tablero)
         imprimir_mochila(mochila)
         imprimir_comandos()
-        imprimir_avance(len(vibora))
+        imprimir_avance(len(vibora), longitud_maxima)
+    return True
 
-def estado_inicial(nivel):
+def estado_inicial(dimensiones_tablero, obstaculos, especiales):
     '''
     Dadas las dimensiones del tablero y los caracteres utilizados para mover a la vibora
     (especificadas como constantes globales), devuelve
@@ -71,32 +81,31 @@ def estado_inicial(nivel):
     y la dirección inicial en la que se mueve la vibora (que es aleatoria).
     '''
 
-    longitud_maxima, dt, (ancho_tablero, alto_tablero), obstaculos, especiales = leer_nivel(nivel)
+    vibora = crear_vibora(obstaculos, dimensiones_tablero)
 
-    vibora = crear_vibora(obstaculos)
+    fruta = list(vibora[0])
+    especial = [nuevo_especial(especiales)]
+    especial.append(list(vibora[0]))
 
-    fruta = [0, 0]
-    especial = [1, 1]
-    tipo_especial = nuevo_especial(especiales)
+    reubicar_fruta(vibora, obstaculos, especial, fruta, dimensiones_tablero) # a posicion aleatoria
 
-    reubicar(vibora, obstaculos, especial, fruta) # a posicion aleatoria
-
-    reubicar(vibora, obstaculos, fruta, especial)
+    reubicar_especial(vibora, obstaculos, fruta, especial, especiales, dimensiones_tablero)
 
     direccion = TECLAS_DIRECCIONES[randrange(4)]
 
-    return vibora, fruta, direccion, obstaculos, especiales, especial, tipo_especial
+    return vibora, fruta, direccion, especial
 
-def crear_vibora(obstaculos):
+def crear_vibora(obstaculos, dimensiones_tablero):
     '''
     Devuelve una lista con una tupla de dos elementos (que son
     las coordenadas x e y de la vibora), inicialmente en el centro del tablero.
     '''
     vibora = []
-    posicion_inicial = ((int(ALTO_TABLERO/2), int(ANCHO_TABLERO/2)))
+    alto_tablero, ancho_tablero = dimensiones_tablero
+    posicion_inicial = ((int(alto_tablero/2), int(ancho_tablero/2)))
     vibora.append(posicion_inicial)
     while posicion_inicial in obstaculos:
-        posicion_inicial = (randrange(ALTO_TABLERO), randrange(ANCHO_TABLERO))
+        posicion_inicial = (randrange(alto_tablero), randrange(ancho_tablero))
         vibora = []
         vibora.append(posicion_inicial)
     return vibora
@@ -203,39 +212,53 @@ def avanzar_cola(vibora):
     '''
     vibora.pop(0)
 
-def comio(vibora, fruta_o_especial):
+def comio_fruta(vibora, fruta):
     '''
     Dadas las coordenadas de la vibora y de la fruta, devuelve True si la vibora
     se comió a la fruta o a un especial o False en caso contrario
     '''
-    return vibora[-1] == tuple(fruta_o_especial)
+    return vibora[-1] == tuple(fruta)
 
-def reubicar(vibora, obstaculos, fijo, a_reubicar):
+def comio_especial(vibora, especial):
+    return vibora[-1] == tuple(especial[1])
+
+def reubicar(vibora, obstaculos, fijo, a_reubicar, dimensiones_tablero):
     '''
     Dadas las coordenadas de la vibora, los obstaculos y la fruta o el especial
     que queda fijo, reubica a la fruta o al especial pasado como parametro
     a_reubicar
     '''
+    alto_tablero, ancho_tablero = dimensiones_tablero
     while True:
         candidato = []
-        candidato.append(randrange(ALTO_TABLERO))
-        candidato.append(randrange(ANCHO_TABLERO))
+        candidato.append(randrange(alto_tablero))
+        candidato.append(randrange(ancho_tablero))
         if tuple(candidato) not in vibora and tuple(candidato) not in obstaculos and candidato != fijo:
             a_reubicar[0:2] = candidato
             break
 
+def reubicar_fruta(vibora, obstaculos, especial, fruta, dimensiones_tablero):
+    reubicar(vibora, obstaculos, especial[1], fruta, dimensiones_tablero)
+
+def reubicar_especial(vibora, obstaculos, fruta, especial, especiales, dimensiones_tablero):
+    reubicar(vibora, obstaculos, fruta, especial[1], dimensiones_tablero)
+    especial[0] = choice(especiales)
+
 def agregar_a_mochila(mochila, especial):
-    mochila[especial][0] += 1
+    mochila[especial[0]][0] += 1
+
+def sacar_de_mochila(mochila, especial):
+    mochila[especial[0]][0] = max(mochila[especial[0]][0] - 1, 0)
 
 def nuevo_especial(especiales):
     return choice(especiales)
 
-def perdio(vibora, obstaculos):
+def perdio(vibora, obstaculos, dimensiones_tablero):
     '''
     Devuelve True si el usuario perdio (ya sea porque se comio a si mismo o
     porque la vibora salio del tablero) y False en caso contrario.
     '''
-    return se_mordio(vibora) or salio_del_tablero(vibora) or toco_obstaculo(vibora, obstaculos)
+    return se_mordio(vibora) or salio_del_tablero(vibora, dimensiones_tablero) or toco_obstaculo(vibora, obstaculos)
 
 def toco_obstaculo(vibora, obstaculos):
     return vibora[-1] in obstaculos
@@ -244,15 +267,16 @@ def se_mordio(vibora):
     '''Dadas las coordenadas de la vibora, devuelve True si se mordio a si misma o False si no'''
     return vibora[-1] in vibora[:-1]
 
-def salio_del_tablero(vibora):
+def salio_del_tablero(vibora, dimensiones_tablero):
     '''
     Dadas las coordenadas de la vibora y las dimensiones del tablero (especificadas como
     constantes globales), devuelve True si la vibora salio del tablero o False en caso contrario.
     '''
+    alto_tablero, ancho_tablero = dimensiones_tablero
     cabeza_vibora = vibora[-1]
-    return -1 in cabeza_vibora or cabeza_vibora[0] == ALTO_TABLERO or cabeza_vibora[1] == ANCHO_TABLERO
+    return -1 in cabeza_vibora or cabeza_vibora[0] == alto_tablero or cabeza_vibora[1] == ancho_tablero
 
-def imprimir_tablero(vibora, fruta, obstaculos, especial, tipo_especial):
+def imprimir_tablero(vibora, fruta, obstaculos, especial, dimensiones_tablero):
     '''
     Dadas las coordenadas de la vibora y de la fruta y las dimensiones
     del tablero (especificadas como constantes globales),
@@ -260,17 +284,19 @@ def imprimir_tablero(vibora, fruta, obstaculos, especial, tipo_especial):
     especificados como constantes globales.
     '''
 
-    for i in range(ALTO_TABLERO):
+    alto_tablero, ancho_tablero = dimensiones_tablero
+
+    for i in range(alto_tablero):
 
         if i == 0: # "techo" del tablero
-            print('_' * (ANCHO_TABLERO + 2))
+            print('_' * (ancho_tablero + 2))
 
-        for j in range(ANCHO_TABLERO):
+        for j in range(ancho_tablero):
 
             if j == 0:
                 print('|', end = '') # lateral izquierdo
 
-            if j == ANCHO_TABLERO - 1:
+            if j == ancho_tablero - 1:
                 fin_linea = '|\n' # lateral derecho
             else:
                 fin_linea = ''
@@ -281,13 +307,13 @@ def imprimir_tablero(vibora, fruta, obstaculos, especial, tipo_especial):
                 print(SIMBOLO_VIBORA, end = fin_linea)
             elif [i, j] == fruta:
                 print(SIMBOLO_FRUTA, end = fin_linea)
-            elif [i, j] == especial:
-                print(tipo_especial, end = fin_linea)
+            elif [i, j] == especial[1]:
+                print(especial[0], end = fin_linea)
             else:
                 print(' ', end = fin_linea)
 
-        if i == ALTO_TABLERO - 1:
-            print('¯' * (ANCHO_TABLERO + 2)) # "piso" del tablero
+        if i == alto_tablero - 1:
+            print('¯' * (ancho_tablero + 2)) # "piso" del tablero
 
 def imprimir_comandos():
     '''Imprime las teclas que se usan para mover a la vibora (instrucciones).'''
@@ -298,14 +324,13 @@ def imprimir_comandos():
         print(str(direcciones[i]) + ': ' + str(TECLAS_DIRECCIONES[i]))
     print()
 
-def imprimir_avance(longitud_vibora):
+def imprimir_avance(longitud_vibora, longitud_maxima):
     '''
     Imprime el estado de avance en el juego
     (cuantas frutas comió y cuántas faltan para ganar).
     '''
-    frutas_faltan = LONGITUD_MAXIMA - longitud_vibora
     print('Frutas comidas: ' + str(longitud_vibora - 1))
-    print('Frutas restantes para ganar: ' + str(frutas_faltan))
+    print('Frutas restantes para pasar de nivel: ' + str(longitud_maxima - longitud_vibora))
 
 def imprimir_mochila(mochila):
     print('MOCHILA:')
