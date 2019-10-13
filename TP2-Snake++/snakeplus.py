@@ -5,7 +5,7 @@ from ejercicio_7_11 import texto_a_pagina
 TECLAS_DIRECCIONES = ('w', 's', 'a', 'd') # tupla con las cuatro direcciones posibles en la forma (arriba, abajo, izquierda, derecha)
 SIMBOLO_VIBORA = '#'
 SIMBOLO_FRUTA = '*'
-SIMBOLO_OBSTACULOS = chr(9632) # chr(9608) es mas rectangular
+SIMBOLO_OBSTACULOS = chr(9632)
 NIVELES = 3
 
 def main():
@@ -14,17 +14,10 @@ def main():
     '''
 
     info_especiales = leer_especiales()
-
     imprimir_bienvenida()
-
-    while True:
-        input_usuario = timed_input(0.05)
-        if 'i' in input_usuario:
-            imprimir_instrucciones()
-        if ' ' in input_usuario:
-            nivel_alcanzado = snake(info_especiales)
-            imprimir_mensaje_final(nivel_alcanzado)
-            break
+    esperar_instruccion()
+    nivel_alcanzado = snake(info_especiales)
+    imprimir_mensaje_final(nivel_alcanzado)
 
 def snake(info_especiales):
     '''
@@ -39,8 +32,7 @@ def snake(info_especiales):
         if paso_de_nivel:
             nivel += 1
             if nivel <= NIVELES: # se cumple siempre que el usuario no haya ganado el juego
-                while ' ' not in timed_input(0.1):
-                    continue
+                esperar_instruccion()
         else:
             break
 
@@ -295,19 +287,21 @@ def nuevo_especial(especiales):
     '''
     return choice(especiales)
 
-def activo_especial(input_usuario, mochila):
+def activo_especial(input_usuario, mochila, longitud_vibora):
     '''
-    Devuelve una tupla (True, aspecto, alteracion) si el usuario activó un especial
+    Devuelve una tupla (aspecto, alteracion) si el usuario activó un especial
     valido (y en ese caso lo saca de la mochila) o devuelve una tupla con
-    (False, 'Nada', 0) en caso contrario.
+    ('No se activo', 0) en caso contrario. Un especial que disminuya la longitud
+    se considera inválido si hace que la longitud de la vibora sea menor a uno
+    (en ese caso no se utiliza el especial y no se lo saca de la mochila).
     '''
     for c in input_usuario:
-        for clave, valor in mochila.items():
-            (simbolo, tecla, aspecto, alteracion, descripcion) = clave
+        for (simbolo, tecla, aspecto, alteracion, descripcion), valor in mochila.items():
             if c == tecla and valor > 0:
-                sacar_de_mochila(mochila, simbolo)
-                return (True, aspecto, alteracion)
-    return (False, 'Nada', 0)
+                if not (aspecto == 'LARGO' and longitud_vibora + alteracion < 1):
+                    sacar_de_mochila(mochila, simbolo)
+                    return (aspecto, alteracion)
+    return ('No se activo', 0)
 
 def especial_largo(vibora, alteracion, direccion):
     '''
@@ -334,13 +328,12 @@ def efecto_especial(input_usuario, mochila, vibora, direccion, dt):
     En caso de usar un especial que modifique la longitud de la vibora, modifica
     la lista vibora acordemente.
     '''
-    (se_activo, aspecto, alteracion) = activo_especial(input_usuario, mochila)
+    (aspecto, alteracion) = activo_especial(input_usuario, mochila, len(vibora))
 
-    if se_activo:
-        if aspecto == 'LARGO':
-            especial_largo(vibora, alteracion, direccion)
-        else:
-            dt = especial_velocidad(dt, alteracion)
+    if aspecto == 'LARGO':
+        especial_largo(vibora, alteracion, direccion)
+    elif aspecto == 'VELOCIDAD':
+        dt = especial_velocidad(dt, alteracion)
     return dt
 
 def perdio(vibora, obstaculos, dimensiones_tablero):
@@ -370,6 +363,13 @@ def salio_del_tablero(vibora, dimensiones_tablero):
     cabeza_vibora = vibora[-1]
     return -1 in cabeza_vibora or cabeza_vibora[0] == alto_tablero \
     or cabeza_vibora[1] == ancho_tablero
+
+def esperar_instruccion():
+    '''
+    Bucle while del cual se sale solamente si el usuario apreta la barra espaciadora.
+    '''
+    while ' ' not in timed_input(0.05):
+        continue
 
 def imprimir_nivel(nivel):
     '''
@@ -438,13 +438,10 @@ def imprimir_avance(longitud_vibora, longitud_maxima, nivel):
     '''
 
     print('Longitud de la vibora: ' + str(longitud_vibora))
-    if nivel < NIVELES:
-        print('Longitud necesaria para pasar de nivel: ' + str(longitud_maxima))
-    else:
-        print('Longitud necesaria para ganar el juego: ' + str(longitud_maxima))
+    print('Longitud necesaria para completar el nivel: ' + str(longitud_maxima))
 
-    if longitud_vibora == longitud_maxima and nivel < NIVELES:
-        print('Nivel completado. Apretá la barra espaciadora para empezar el próximo nivel.')
+    if longitud_vibora >= longitud_maxima and nivel < NIVELES:
+        print('NIVEL COMPLETADO. Apretá la barra espaciadora para empezar el próximo nivel.')
 
 def imprimir_mochila(mochila):
     '''
@@ -480,8 +477,8 @@ def imprimir_instrucciones():
     +'pasar de nivel es llegar a una longitud determinada, que se informa en cada '\
     +'nivel. La viborita se mueve hacia (arriba, abajo, izquierda, derecha) '\
     +'con las teclas ' + str(TECLAS_DIRECCIONES) + ' respectivamente. '\
-    +'Para que la vibora crezca debe comer frutas, representadas con el simbolo '\
-    + str(SIMBOLO_FRUTA) + '. Tambien tiene la posibilidad de hacerlo mediante '\
+    +'Para que la viborita crezca debe comer frutas, representadas con el simbolo '\
+    + str(SIMBOLO_FRUTA) + '. Tambien tiene la posibilidad de crecer mediante '\
     +'el uso de especiales, que son poderes que se adquieren luego de comerlos en '\
     +'el tablero. En cada nivel hay especiales distintos, con distintos poderes que '\
     +'permiten alargar o acortar la vibora o aumentar o reducir su velocidad. '\
@@ -490,20 +487,21 @@ def imprimir_instrucciones():
     +'disponibles y el efecto de cada uno. El nivel termina cuando se llega a la '\
     +'longitud requerida, en cuyo caso se pasa de nivel, o cuando la vibora se come '\
     +'a si misma, sale del tablero, o toca un obstáculo, representados con el símbolo '\
-    + SIMBOLO_OBSTACULOS + ', en cuyo caso pierde el juego. La cantidad total de niveles '\
+    + SIMBOLO_OBSTACULOS + ', en cuyo caso pierde el juego. Al pasar de nivel '\
+    +'se pierden los especiales que se tenían. La cantidad total de niveles '\
     +'es ' + str(NIVELES) + '.'
 
-    clear_terminal()
-    print('Instrucciones de Snake++:')
+    print('Instrucciones para jugar:')
     for renglon in texto_a_pagina(instrucciones, 60):
         print(renglon)
-    print('Apretá la barra espaciadora para comenzar a jugar!')
 
 def imprimir_bienvenida():
     '''Imprime el mensaje de bienvenida al usuario.'''
     clear_terminal()
-    print('Bienvenido a Snake++, la versión remasterizada del clásico juego de la viborita.')
-    print('Apretá la barra espaciadora para empezar a jugar, o la tecla i para leer las instrucciones.')
+    print('Bienvenido a Snake++, la versión recargada del clásico juego de la viborita.')
+    print('Apretá la BARRA ESPACIADORA para empezar a jugar.')
+    print('')
+    imprimir_instrucciones()
 
 def imprimir_mensaje_final(nivel_alcanzado):
     '''Imprime el mensaje final al usuario.'''
