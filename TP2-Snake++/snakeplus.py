@@ -15,7 +15,7 @@ def main():
 
     info_especiales = leer_especiales()
     imprimir_bienvenida()
-    esperar_instruccion()
+    esperar_instruccion(' ')
     nivel_alcanzado = snake(info_especiales)
     imprimir_mensaje_final(nivel_alcanzado)
 
@@ -32,7 +32,7 @@ def snake(info_especiales):
         if paso_de_nivel:
             nivel += 1
             if nivel <= NIVELES: # se cumple siempre que el usuario no haya ganado el juego
-                esperar_instruccion()
+                esperar_instruccion(' ')
         else:
             break
 
@@ -40,7 +40,7 @@ def snake(info_especiales):
 
 def jugar_nivel(nivel, info_especiales):
     '''
-    Juego de un nivel de Snake. Dadas las caracteristicas del nivel (longitud
+    Juego de un nivel de Snake++. Dadas las caracteristicas del nivel (longitud
     de la vibora necesaria para pasar de nivel, tiempo de reaccion inicial,
     dimensiones del tablero, posiciones de los obstaculos y especiales que
     pueden aparecer) y la descripcion de los especiales, ejecuta el juego del
@@ -363,11 +363,12 @@ def salio_del_tablero(vibora, dimensiones_tablero):
     return -1 in cabeza_vibora or cabeza_vibora[0] == alto_tablero \
     or cabeza_vibora[1] == ancho_tablero
 
-def esperar_instruccion():
+def esperar_instruccion(caracter):
     '''
-    Bucle while del cual se sale solamente si el usuario apreta la barra espaciadora.
+    Bucle while del cual se sale solamente si el usuario apreta el caracter
+    pasado por parámetro (que debe ser una cadena de longitud 1).
     '''
-    while ' ' not in timed_input(0.05):
+    while caracter not in timed_input(0.05):
         continue
 
 def imprimir_nivel(nivel):
