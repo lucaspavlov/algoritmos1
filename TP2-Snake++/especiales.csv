@@ -1,0 +1,7 @@
+%,LARGO,1,t,Aumenta el largo en una unidad
+$,VELOCIDAD,2,y,Disminuye la velocidad a la mitad
+@,VELOCIDAD,0.5,u,Aumenta la velocidad al doble
+&,LARGO,-1,g,Disminuye el largo en una unidad
++,VELOCIDAD,0.33,h,Aumenta la velocidad al triple
+^,VELOCIDAD,3,j,Disminuye la velocidad a la tercera parte
+v,LARGO,2,b,Aumenta el largo en dos unidades
