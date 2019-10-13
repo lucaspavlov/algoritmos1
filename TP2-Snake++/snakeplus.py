@@ -116,24 +116,24 @@ def crear_vibora(obstaculos, dimensiones_tablero):
         vibora[0] = posicion_inicial
     return vibora
 
-def crear_mochila(info_especiales, especiales):
+def crear_mochila(info_especiales, especiales_nivel):
     '''
-    Devuelve un diccionario cuyas claves son una lista que contiene, en su
-    primera entrada, un cero (valor inicial de la cantidad de especiales en
-    la mochila), y en su segunda entrada, una tupla con el resto de la informacion
-    contenida en el archivo especiales.csv en el orden
-    (aspecto, alteracion, tecla, descripcion), donde aspecto, tecla y descripcion
-    son cadenas y alteracion es entero o flotante dependiendo de si aspecto es
-    'LARGO' o 'VELOCIDAD' respectivamente.
+    Devuelve un diccionario cuyas claves son una tupla con el simbolo, aspecto,
+    alteracion, tecla y descripcion del especial, y los valores, que representan
+    la cantidad de especiales en la mochila, son cero. La mochila contiene
+    solamente los especiales que pueden aparecer en el presente nivel.
+    En las claves, aspecto, tecla y descripcion son cadenas y alteracion es
+    entero o flotante dependiendo de si aspecto es 'LARGO' o 'VELOCIDAD' respectivamente.
     '''
     mochila = {}
 
-    for simbolo, aspecto, alteracion, tecla, descripcion in info_especiales:
-        if simbolo in especiales:
+    for simbolo, aspecto, alteracion_cadena, tecla, descripcion in info_especiales:
+        if simbolo in especiales_nivel: # deberia suceder siempre si los archivos estan bien
             if aspecto == 'LARGO':
-                mochila[(simbolo, tecla, aspecto, int(alteracion), descripcion)] = 0
-            else:
-                mochila[(simbolo, tecla, aspecto, float(alteracion), descripcion)] = 0
+                alteracion = int(alteracion_cadena)
+            elif aspecto == 'VELOCIDAD':
+                alteracion = float(alteracion_cadena)
+            mochila[(simbolo, tecla, aspecto, alteracion, descripcion)] = 0
 
     return mochila
 
