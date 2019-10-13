@@ -140,7 +140,7 @@ def crear_mochila(info_especiales, especiales_nivel):
 def leer_especiales():
     '''
     Lee el archivo especiales.csv y devuelve la información (simbolo y efecto)
-    de los distintos tipos de especiales posibles en forma de lista.
+    de los distintos tipos de especiales posibles en forma de tupla.
     '''
     info_especiales = []
     with open('especiales.csv') as archivo_especiales:
@@ -148,7 +148,7 @@ def leer_especiales():
         while linea[0] != '':
              info_especiales.append(linea)
              linea = archivo_especiales.readline().rstrip().split(',')
-    return info_especiales
+    return tuple(info_especiales)
 
 def leer_nivel(nivel):
     '''
