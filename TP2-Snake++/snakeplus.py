@@ -113,8 +113,7 @@ def crear_vibora(obstaculos, dimensiones_tablero):
     vibora.append(posicion_inicial)
     while posicion_inicial in obstaculos:
         posicion_inicial = (randrange(alto_tablero), randrange(ancho_tablero))
-        vibora = []
-        vibora.append(posicion_inicial)
+        vibora[0] = posicion_inicial
     return vibora
 
 def crear_mochila(info_especiales, especiales):
