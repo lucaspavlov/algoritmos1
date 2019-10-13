@@ -1,10 +1,7 @@
 from terminal import clear_terminal, timed_input
 from random import randrange, choice
+from time import sleep
 
-ANCHO_TABLERO = 20
-ALTO_TABLERO = 10
-LONGITUD_MAXIMA = 10 # longitud maxima de la vibora (si llega a esa longitud termina el juego y el usuario gana)
-DT = 0.2 # paso temporal (en segundos) entre iteraciones, si es mas chico la vibora va mas rapido
 TECLAS_DIRECCIONES = ('w', 's', 'a', 'd') # tupla con las cuatro direcciones posibles en la forma (arriba, abajo, izquierda, derecha)
 SIMBOLO_VIBORA = '#'
 SIMBOLO_FRUTA = '*'
@@ -15,38 +12,46 @@ def main():
     '''
     Flujo principal del juego snake.
     '''
-    lineas_especiales = leer_especiales()
-    nivel_alcanzado = snake(lineas_especiales)
+    info_especiales = leer_especiales()
+    nivel_alcanzado = snake(info_especiales)
     imprimir_mensaje_final(nivel_alcanzado)
 
-def snake(lineas_especiales):
+def snake(info_especiales):
+    '''
+    Ejecuta el juego de Snake, pasando por los distintos niveles hasta que el
+    usuario gane (pase todos los niveles) o pierda. Devuelve el valor del ultimo
+    nivel jugado por el usuario si el usuario perdio, o la cantidad de niveles
+    totales + 1 si el usuario gano.
+    '''
     nivel = 1
     while nivel <= NIVELES:
-        caracteristicas_nivel = leer_nivel(nivel)
-        if jugar_nivel(caracteristicas_nivel, lineas_especiales):
+        paso_de_nivel = jugar_nivel(nivel, info_especiales)
+        if paso_de_nivel:
             nivel += 1
+            sleep(1)
         else:
             break
     return nivel
 
-def jugar_nivel(caracteristicas_nivel, lineas_especiales):
+def jugar_nivel(nivel, info_especiales):
     '''
-    Funcion principal del juego snake. La vibora se mueve hacia
-    arriba, abajo, izquierda o derecha usando cuatro teclas del teclado,
-    especificadas en la constante global TECLAS_DIRECCIONES.
-    Hay una fruta en la zona de juego y cuando la vibora la come, la fruta
-    aparece en otra posición y la longitud de la vibora se incrementa en
-    una unidad. El juego termina cuando la longitud de la vibora alcanza el valor
-    prefijado en la constante global LONGITUD_MAXIMA (en cuyo caso
-    el usuario gana), o si la vibora se come a si misma o sale del tablero,
-    en cuyo caso el usuario pierde.
+    Juego de un nivel de Snake. Dadas las caracteristicas del nivel (longitud
+    de la vibora necesaria para pasar de nivel, tiempo de reaccion inicial,
+    dimensiones del tablero, posiciones de los obstaculos y especiales que
+    pueden aparecer) y la descripcion de los especiales, ejecuta el juego del
+    snake para un dado nivel. Devuelve True si el usuario paso de nivel o False
+    en caso contrario.
     '''
+    caracteristicas_nivel = leer_nivel(nivel)
     longitud_maxima, dt, dimensiones_tablero, obstaculos, especiales = caracteristicas_nivel
     vibora, fruta, direccion, especial = estado_inicial(dimensiones_tablero, obstaculos, especiales)
-    mochila = crear_mochila(lineas_especiales, especiales)
+    mochila = crear_mochila(info_especiales, especiales)
+
     while len(vibora) < longitud_maxima:
 
-        direccion = actualizar_direccion(timed_input(dt), direccion)
+        input_usuario = timed_input(dt)
+
+        direccion = actualizar_direccion(input_usuario, direccion)
 
         avanzar_cabeza(vibora, direccion)
 
@@ -59,10 +64,13 @@ def jugar_nivel(caracteristicas_nivel, lineas_especiales):
             agregar_a_mochila(mochila, especial)
             reubicar_especial(vibora, obstaculos, fruta, especial, especiales, dimensiones_tablero)
 
+        dt = efecto_especial(input_usuario, mochila, vibora, direccion, dt)
+
         if perdio(vibora, obstaculos, dimensiones_tablero):
             return False
 
         clear_terminal()
+        imprimir_nivel(nivel)
         imprimir_tablero(vibora, fruta, obstaculos, especial, dimensiones_tablero)
         imprimir_mochila(mochila)
         imprimir_comandos()
@@ -107,7 +115,7 @@ def crear_vibora(obstaculos, dimensiones_tablero):
         vibora.append(posicion_inicial)
     return vibora
 
-def crear_mochila(lineas_especiales, especiales):
+def crear_mochila(info_especiales, especiales):
     '''
     Devuelve un diccionario cuyas claves son una lista que contiene, en su
     primera entrada, un cero (valor inicial de la cantidad de especiales en
@@ -119,24 +127,23 @@ def crear_mochila(lineas_especiales, especiales):
     '''
     mochila = {}
 
-    for simbolo, aspecto, alteracion, tecla, descripcion in lineas_especiales:
+    for simbolo, aspecto, alteracion, tecla, descripcion in info_especiales:
         if simbolo in especiales:
-            mochila[simbolo] = [0]
             if aspecto == 'LARGO':
-                mochila[simbolo].append((aspecto, int(alteracion), tecla, descripcion))
+                mochila[(simbolo, tecla, aspecto, int(alteracion), descripcion)] = 0
             else:
-                mochila[simbolo].append((aspecto, float(alteracion), tecla, descripcion))
+                mochila[(simbolo, tecla, aspecto, float(alteracion), descripcion)] = 0
 
     return mochila
 
 def leer_especiales():
-    lineas_especiales = []
-    with open('especiales.csv') as especiales:
-        linea = especiales.readline().rstrip().split(',')
+    info_especiales = []
+    with open('especiales.csv') as archivo_especiales:
+        linea = archivo_especiales.readline().rstrip().split(',')
         while linea[0] != '':
-             lineas_especiales.append(linea)
-             linea = especiales.readline().rstrip().split(',')
-    return lineas_especiales
+             info_especiales.append(linea)
+             linea = archivo_especiales.readline().rstrip().split(',')
+    return info_especiales
 
 def leer_nivel(nivel):
     lineas_nivel = []
@@ -145,7 +152,9 @@ def leer_nivel(nivel):
         while linea != '':
            lineas_nivel.append(linea)
            linea = nivel.readline().rstrip()
-    return longitud_maxima(lineas_nivel), dt(lineas_nivel), dimensiones_tablero(lineas_nivel), coordenadas_obstaculos(lineas_nivel), simbolos_especiales(lineas_nivel)
+    return longitud_maxima(lineas_nivel), dt(lineas_nivel), \
+    dimensiones_tablero(lineas_nivel), coordenadas_obstaculos(lineas_nivel), \
+    simbolos_especiales(lineas_nivel)
 
 def resetear_mochila(mochila):
     '''
@@ -153,7 +162,7 @@ def resetear_mochila(mochila):
     mochila de manera de que la primera entrada sea cero.
     '''
     for clave in mochila.keys():
-        mochila[clave][0] = 0
+        mochila[clave] = 0
 
 def longitud_maxima(lineas_nivel):
     return int(lineas_nivel[0])
@@ -174,17 +183,6 @@ def coordenadas_obstaculos(lineas_nivel):
 
 def simbolos_especiales(lineas_nivel):
     return tuple(lineas_nivel[4].split(','))
-
-def teclas_especiales(mochila, especiales):
-    '''
-    Dada la mochila y los especiales de un nivel, devuelve una tupla con las
-    distintas teclas que activan los especiales de ese nivel.
-    '''
-    teclas = []
-    for clave, valor in mochila.items():
-        if clave in especiales:
-            teclas.append(valor[1][2])
-    return tuple(teclas)
 
 def actualizar_direccion(input_usuario, direccion_actual):
     '''
@@ -229,13 +227,18 @@ def comio_fruta(vibora, fruta):
     return vibora[-1] == tuple(fruta)
 
 def comio_especial(vibora, especial):
+    '''
+    Devuelve True si la vibora comio un especial o False en caso contrario
+    '''
     return vibora[-1] == tuple(especial[1])
 
 def reubicar(vibora, obstaculos, fijo, a_reubicar, dimensiones_tablero):
     '''
-    Dadas las coordenadas de la vibora, los obstaculos y la fruta o el especial
-    que queda fijo, reubica a la fruta o al especial pasado como parametro
-    a_reubicar
+    Dadas las coordenadas de la vibora, los obstaculos, las dimensiones del
+    tablero, un elemento que queda fijo (puede ser la fruta o un especial) y
+    otro que hay que reubicar (es el especial o la fruta, el que no queda fijo),
+    reubica al elemento a reubicar en una posicion aleatoria que no coincida con
+    la vibora, los obstaculos ni el elemento fijo que esta en el tablero.
     '''
     alto_tablero, ancho_tablero = dimensiones_tablero
     while True:
@@ -247,41 +250,92 @@ def reubicar(vibora, obstaculos, fijo, a_reubicar, dimensiones_tablero):
             break
 
 def reubicar_fruta(vibora, obstaculos, especial, fruta, dimensiones_tablero):
+    '''
+    Reubica la fruta (modificando la lista fruta) en una posicion disponible del tablero.
+    '''
     reubicar(vibora, obstaculos, especial[1], fruta, dimensiones_tablero)
 
 def reubicar_especial(vibora, obstaculos, fruta, especial, especiales, dimensiones_tablero):
+    '''
+    Reubica el especial (modificando la segunda entrada de la lista especial)
+    en una posicion disponible del tablero. Ademas modifica la primera entrada
+    de la lista especial con el simbolo del nuevo especial presente en el tablero.
+    '''
     reubicar(vibora, obstaculos, fruta, especial[1], dimensiones_tablero)
     especial[0] = choice(especiales)
 
-def uso_especial(teclas_especiales, input_usuario):
-    for c in input_usuario:
-        if c in teclas_especiales:
-            return True
-    return False
-
 def agregar_a_mochila(mochila, especial):
-    mochila[especial[0]][0] += 1
+    '''
+    Agrega un especial a la mochila.
+    '''
+    for clave in mochila.keys():
+        if especial[0] == clave[0]:
+            mochila[clave] += 1
+            break
 
 def sacar_de_mochila(mochila, especial):
-    mochila[especial[0]][0] = max(mochila[especial[0]][0] - 1, 0)
+    '''
+    Saca un especial de la mochila. Si la mochila no tiene ningun elemento
+    del especial, no hace nada.
+    '''
+    for clave in mochila.keys():
+        if especial[0] == clave[0]:
+            mochila[clave] = max(mochila[clave] - 1, 0)
+            break
 
 def nuevo_especial(especiales):
+    '''
+    Dado una tupla con especiales posibles, devuelve uno al azar.
+    '''
     return choice(especiales)
 
-def efecto_especial(especial, vibora, direccion, dt, mochila):
-    factor = mochila[especial[0]][1][1]
-    if mochila[especial[0]][1][0] == 'LARGO':
-        especial_largo(factor, vibora, direccion)
-    else:
-        dt *= factor
+def activo_especial(input_usuario, mochila):
+    '''
+    Devuelve una tupla (True, aspecto, alteracion) si el usuario activó un especial
+    valido (y en ese caso lo saca de la mochila) o devuelve una tupla con
+    (False, 'Nada', 0) en caso contrario.
+    '''
+    for c in input_usuario:
+        for clave, valor in mochila.items():
+            (simbolo, tecla, aspecto, alteracion, descripcion) = clave
+            if c == tecla and valor > 0:
+                sacar_de_mochila(mochila, simbolo)
+                return (True, aspecto, alteracion)
+    return (False, 'Nada', 0)
 
-def especial_largo(factor, vibora, direccion):
-    if factor > 0:
-        for i in range(factor):
+def especial_largo(vibora, alteracion, direccion):
+    '''
+    Alarga o acorta la vibora de acuerdo a la alteracion del especial utilizado.
+    '''
+    if alteracion > 0:
+        for i in range(alteracion):
             avanzar_cabeza(vibora, direccion)
     else:
-        for i in range(min(-factor, len(vibora)-1)): # asegura que la vibora tenga longitud al menos 1
+        for i in range(min(-alteracion, len(vibora)-1)): # asegura que la vibora tenga longitud al menos 1
             avanzar_cola(vibora)
+
+def especial_velocidad(dt, alteracion):
+    '''
+    Aumenta o disminuye la velocidad de acuerdo a la alteracion del especial utilizado.
+    '''
+    return dt * alteracion
+
+def efecto_especial(input_usuario, mochila, vibora, direccion, dt):
+    '''
+    Devuelve el nuevo valor de dt, que sera el mismo que el anterior si no se
+    uso ningun especial o si se uso uno que modifique la longitud de la vibora,
+    o diferente si se uso un especial que modifique el tiempo de reaccion.
+    En caso de usar un especial que modifique la longitud de la vibora, modifica
+    la lista vibora acordemente.
+    '''
+    (se_activo, aspecto, alteracion) = activo_especial(input_usuario, mochila)
+
+    if se_activo:
+        if aspecto == 'LARGO':
+            especial_largo(vibora, alteracion, direccion)
+        else:
+            dt = especial_velocidad(dt, alteracion)
+    return dt
 
 def perdio(vibora, obstaculos, dimensiones_tablero):
     '''
@@ -291,6 +345,9 @@ def perdio(vibora, obstaculos, dimensiones_tablero):
     return se_mordio(vibora) or salio_del_tablero(vibora, dimensiones_tablero) or toco_obstaculo(vibora, obstaculos)
 
 def toco_obstaculo(vibora, obstaculos):
+    '''
+    Devuelve True si la vibora toco un obstaculo o False en caso contrario
+    '''
     return vibora[-1] in obstaculos
 
 def se_mordio(vibora):
@@ -305,6 +362,12 @@ def salio_del_tablero(vibora, dimensiones_tablero):
     alto_tablero, ancho_tablero = dimensiones_tablero
     cabeza_vibora = vibora[-1]
     return -1 in cabeza_vibora or cabeza_vibora[0] == alto_tablero or cabeza_vibora[1] == ancho_tablero
+
+def imprimir_nivel(nivel):
+    '''
+    Imprime el nivel actual y la cantidad total de niveles.
+    '''
+    print('Nivel ' + str(nivel) + ' de ' + str(NIVELES))
 
 def imprimir_tablero(vibora, fruta, obstaculos, especial, dimensiones_tablero):
     '''
@@ -366,10 +429,11 @@ def imprimir_mochila(mochila):
     print('MOCHILA:')
     print('SIMBOLO || CANTIDAD || TECLA || DESCRIPCION')
     for clave, valor in mochila.items():
-        print('   ' + clave, end = '')
-        print('    ||    ' + str(valor[0]), end = '')
-        print('     ||   ' + valor[1][2], end = '')
-        print('   || ' + valor[1][3])
+        simbolo, tecla, aspecto, alteracion, descripcion = clave
+        print('   ' + simbolo, end = '')
+        print('    ||    ' + str(valor), end = '')
+        print('     ||   ' + tecla, end = '')
+        print('   || ' + descripcion)
 
 def imprimir_mensaje_final(nivel_alcanzado):
     '''Imprime el mensaje final al usuario'''
