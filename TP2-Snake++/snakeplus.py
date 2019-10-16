@@ -290,17 +290,16 @@ def activo_especial(input_usuario, mochila, longitud_vibora):
     '''
     Devuelve una tupla (aspecto, alteracion) si el usuario activó un especial
     valido (y en ese caso lo saca de la mochila) o devuelve una tupla con
-    ('No se activo', 0) en caso contrario. Un especial que disminuya la longitud
+    ('', 0) en caso contrario. Un especial que disminuya la longitud
     se considera inválido si hace que la longitud de la vibora sea menor a uno
     (en ese caso no se utiliza el especial y no se lo saca de la mochila).
     '''
     for c in input_usuario:
         for (simbolo, tecla, aspecto, alteracion, descripcion), valor in mochila.items():
-            if c == tecla and valor > 0:
-                if not (aspecto == 'LARGO' and longitud_vibora + alteracion < 1):
-                    sacar_de_mochila(mochila, simbolo)
-                    return (aspecto, alteracion)
-    return ('No se activo', 0)
+            if c == tecla and valor > 0 and not (aspecto == 'LARGO' and longitud_vibora + alteracion < 1):
+                sacar_de_mochila(mochila, simbolo)
+                return (aspecto, alteracion)
+    return ('', 0)
 
 def especial_largo(vibora, alteracion, direccion):
     '''
