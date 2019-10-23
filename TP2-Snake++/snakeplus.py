@@ -5,8 +5,8 @@ from ejercicio_7_11 import texto_a_pagina
 TECLAS_DIRECCIONES = ('w', 's', 'a', 'd') # tupla con las cuatro direcciones posibles en la forma (arriba, abajo, izquierda, derecha)
 SIMBOLO_VIBORA = '#'
 SIMBOLO_FRUTA = '*'
-SIMBOLO_OBSTACULOS = chr(9632)
-NIVELES = 3
+SIMBOLO_OBSTACULOS = chr(9608)
+NIVELES = 4
 
 def main():
     '''
@@ -53,7 +53,7 @@ def jugar_nivel(nivel, info_especiales):
 
     while len(vibora) < longitud_maxima:
 
-        input_usuario = timed_input(dt)
+        input_usuario = timed_input(dt).lower()
 
         direccion = actualizar_direccion(input_usuario, direccion)
 
@@ -155,10 +155,10 @@ def leer_nivel(nivel):
     Dado un número de nivel, lee la información relativa al mismo (longitud máxima
     para pasar de nivel, tiempo de reacción inicial, dimensiones del tablero,
     coordenadas de los obstáculos y especiales válidos) contenida en un archivo
-    .txt), la procesa y la devuelve en forma de tupla.
+    .txt, la procesa y la devuelve en forma de tupla.
     '''
     lineas_nivel = []
-    with open('nivel_' + str(nivel) + '.txt', 'r') as nivel:
+    with open('nivel_{}.txt'.format(nivel), 'r') as nivel:
         linea = nivel.readline().rstrip()
         while linea != '':
            lineas_nivel.append(linea)
@@ -259,7 +259,7 @@ def reubicar_especial(vibora, obstaculos, fruta, especial, especiales, dimension
     de la lista especial con el simbolo del nuevo especial presente en el tablero.
     '''
     reubicar(vibora, obstaculos, fruta, especial[1], dimensiones_tablero)
-    especial[0] = choice(especiales)
+    especial[0] = nuevo_especial(especiales)
 
 def agregar_a_mochila(mochila, especial):
     '''
@@ -309,7 +309,7 @@ def especial_largo(vibora, alteracion, direccion):
         for i in range(alteracion):
             avanzar_cabeza(vibora, direccion)
     else:
-        for i in range(min(-alteracion, len(vibora)-1)): # asegura que la vibora tenga longitud al menos 1
+        for i in range(-alteracion):
             avanzar_cola(vibora)
 
 def especial_velocidad(dt, alteracion):
@@ -472,12 +472,12 @@ def imprimir_instrucciones():
     '''Imprime las instrucciones del juego'''
 
     instrucciones = 'La viborita, representada con el simbolo '\
-    + str(SIMBOLO_VIBORA) + ' empieza con longitud 1, y el objetivo para '\
+    + SIMBOLO_VIBORA + ' empieza con longitud 1, y el objetivo para '\
     +'pasar de nivel es llegar a una longitud determinada, que se informa en cada '\
     +'nivel. La viborita se mueve hacia (arriba, abajo, izquierda, derecha) '\
     +'con las teclas ' + str(TECLAS_DIRECCIONES) + ' respectivamente. '\
     +'Para que la viborita crezca debe comer frutas, representadas con el simbolo '\
-    + str(SIMBOLO_FRUTA) + '. Tambien tiene la posibilidad de crecer mediante '\
+    + SIMBOLO_FRUTA + '. Tambien tiene la posibilidad de crecer mediante '\
     +'el uso de especiales, que son poderes que se adquieren luego de comerlos en '\
     +'el tablero. En cada nivel hay especiales distintos, con distintos poderes que '\
     +'permiten alargar o acortar la vibora o aumentar o reducir su velocidad. '\
