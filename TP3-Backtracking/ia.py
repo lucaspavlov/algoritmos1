@@ -1,3 +1,6 @@
+from pila import Pila
+from mapa2 import Mapa,Coord
+
 class IA:
     """
     Inteligencia artificial para resolver un laberinto.
@@ -22,7 +25,10 @@ class IA:
         Argumentos:
             mapa (Mapa): El mapa con el laberinto a resolver
         """
-        raise NotImplementedError()
+        self.mapa = mapa
+        self.posicion = mapa.origen()
+        self._visitados = [mapa.origen()]
+        self.camino=Pila()
 
     def coord_jugador(self):
         """Coordenadas del "jugador".
@@ -43,7 +49,7 @@ class IA:
             >>> ia.coord_jugador()
             Coord(2, 0)
         """
-        raise NotImplementedError()
+        return self.posicion
 
     def visitados(self):
         """Celdas visitadas.
@@ -61,7 +67,7 @@ class IA:
             >>> ia.visitados()
             [Coord(0, 0), Coord(1, 0),  Coord(2, 0)]
         """
-        raise NotImplementedError()
+        return self._visitados
 
     def camino(self):
         """Camino principal calculado.
@@ -85,7 +91,7 @@ class IA:
             lista devuelta (esto tal vez permite simplificar la
             implementación).
         """
-        raise NotImplementedError()
+        return self.camino
 
     def avanzar(self):
         """Avanza un paso en la simulación.
@@ -93,5 +99,23 @@ class IA:
         Si el jugador no está en la celda destino, y hay algún movimiento
         posible hacia una celda no visitada, se efectúa ese movimiento.
         """
-        raise NotImplementedError()
+        if self.posicion==self.mapa.destino():
+            return
+        movimientos_posibles = ((1, 0), (0, 1), (-1, 0), (0, -1))
+        anterior=self.posicion
+        for movimiento in movimientos_posibles: # de esta forma no es aleatorio porque siempre intenta primero con el (1, 0), etc.
+            df, dc = movimiento
+            candidato = self.posicion.trasladar(df, dc)
+            if candidato not in self.visitados() and self.mapa.es_coord_valida(candidato) and not self.mapa.celda_bloqueada(candidato):
+                self.posicion = candidato
+                self._visitados.append(candidato) #Si ya no esta en self.visitados lo preguntabas dos veces
+                self.camino.apilar(candidato)
+        if self.posicion==anterior:
+            self.camino.desapilar()
+            candidato=self.camino.desapilar()
+            self.camino.apilar(candidato)
+            self.posicion=candidato
+
+                    
+
 

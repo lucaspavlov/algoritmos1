@@ -91,9 +91,9 @@ class Mapa:
         Argumentos:
             filas, columnas (int): Tamaño del mapa
         """
-        self.origen = Coord(0, 0)
-        self.destino = Coord(filas-1, columnas-1)
-        self.mapa = [[True for x in range(columnas)] for x in range(filas)]
+        self.origen = [1, 1]
+        self.destino = [filas-1, columnas-1]
+        self.mapa = [[False for x in range(columnas)] for x in range(filas)]
         # puse True pero podria ser 1... puse True porque se supone que
         # se deberia poder representar con un booleano (False serian las paredes)
 
@@ -127,7 +127,8 @@ class Mapa:
         Argumentos:
             coord (Coord): Coordenadas de la celda origen
         """
-        self.origen = coord
+        f, c = coord
+        self.origen = [f, c]
 
     def asignar_destino(self, coord):
         """Asignar la celda destino.
@@ -135,7 +136,8 @@ class Mapa:
         Argumentos:
             coord (Coord): Coordenadas de la celda destino
         """
-        self.destino = coord
+        f, c = coord
+        self.destino = [f, c]
 
     def celda_bloqueada(self, coord):
         """¿La celda está bloqueada?
@@ -208,7 +210,7 @@ class Mapa:
             Coord: La coordenada trasladada si queda dentro del mapa. En caso
                    contrario, devuelve la coordenada recibida.
         """
-        trasladada = coord.trasladar(df, dc)
+        trasladada = coord.trasladar(df, dc) # en realidad trasladar es un metodo de la clase Coord. No estoy seguro de si se puede usar en este contexto.
         if self.es_coord_valida(trasladada):
             return trasladada
         return coord
@@ -225,4 +227,28 @@ class Mapa:
             >>> for coord in mapa:
             >>>     print(coord, mapa.celda_bloqueada(coord))
         """
-        raise NotImplementedError()
+        return _IteradorMapa(self)
+
+class _IteradorMapa:
+    def __init__(self,mapa):
+        self.coord=mapa.origen
+        self.mapa=mapa
+        self.origen=False
+
+    def __next__(self):
+        if self.coord==self.mapa.destino:
+            raise StopIteration()
+        elif self.coord==[0,0] and self.origen==False:
+            self.origen=True
+            return self.coord    
+        elif self.coord[1]<self.mapa.dimension()[1]-1:
+            self.coord[1]+=1
+            return self.coord
+        elif self.coord[1]==self.mapa.dimension()[1]-1 and self.coord[0]<self.mapa.dimension()[0]-1:   
+            self.coord[0]+=1
+            self.coord[1]=0
+            return  self.coord    
+
+                
+
+
