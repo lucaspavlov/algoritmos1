@@ -91,8 +91,8 @@ class Mapa:
         Argumentos:
             filas, columnas (int): Tamaño del mapa
         """
-        self.origen = [1, 1]
-        self.destino = [filas-1, columnas-1]
+        self._origen = [1, 1]
+        self._destino = [filas-1, columnas-1]
         self.mapa = [[False for x in range(columnas)] for x in range(filas)]
         # puse True pero podria ser 1... puse True porque se supone que
         # se deberia poder representar con un booleano (False serian las paredes)
@@ -111,7 +111,7 @@ class Mapa:
         Devuelve:
             Coord: Las coordenadas de la celda origen
         """
-        return Coord(self.origen[0], self.origen[1])
+        return Coord(self._origen[0], self._origen[1])
 
     def destino(self):
         """Celda destino.
@@ -119,7 +119,7 @@ class Mapa:
         Devuelve:
             Coord: Las coordenadas de la celda destino
         """
-        return Coord(self.destino[0], self.destino[1])
+        return Coord(self._destino[0], self._destino[1])
 
     def asignar_origen(self, coord):
         """Asignar la celda origen.
@@ -128,7 +128,7 @@ class Mapa:
             coord (Coord): Coordenadas de la celda origen
         """
         f, c = coord
-        self.origen = [f, c]
+        self._origen = [f, c]
 
     def asignar_destino(self, coord):
         """Asignar la celda destino.
@@ -137,7 +137,7 @@ class Mapa:
             coord (Coord): Coordenadas de la celda destino
         """
         f, c = coord
-        self.destino = [f, c]
+        self._destino = [f, c]
 
     def celda_bloqueada(self, coord):
         """¿La celda está bloqueada?
@@ -230,25 +230,22 @@ class Mapa:
         return _IteradorMapa(self)
 
 class _IteradorMapa:
-    def __init__(self,mapa):
-        self.coord=mapa.origen
-        self.mapa=mapa
-        self.origen=False
+    def __init__(self, mapa):
+        self.coord = [0, 0]
+        self.primera = True
+        self.ultima_fila = mapa.dimension()[0] - 1
+        self.ultima_columna = mapa.dimension()[1] - 1
 
     def __next__(self):
-        if self.coord==self.mapa.destino:
+        if self.coord == [self.ultima_fila, self.ultima_columna]:
             raise StopIteration()
-        elif self.coord==[0,0] and self.origen==False:
-            self.origen=True
-            return self.coord    
-        elif self.coord[1]<self.mapa.dimension()[1]-1:
+        if self.primera:
+            self.primera = False
+            return self.coord
+        if self.coord[1] < self.ultima_columna:
             self.coord[1]+=1
             return self.coord
-        elif self.coord[1]==self.mapa.dimension()[1]-1 and self.coord[0]<self.mapa.dimension()[0]-1:   
+        if self.coord[0] < self.ultima_fila:
             self.coord[0]+=1
             self.coord[1]=0
-            return  self.coord    
-
-                
-
-
+            return self.coord
