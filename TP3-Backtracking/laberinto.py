@@ -1,5 +1,6 @@
-from mapa2 import Mapa,Coord
-from random import randrange
+from mapa import Mapa, Coord
+from random import randrange, choice
+from pila import Pila
 
 def generar_laberinto(filas, columnas):
     """Generar un laberinto.
@@ -11,46 +12,90 @@ def generar_laberinto(filas, columnas):
         Mapa: un mapa nuevo con celdas bloqueadas formando un laberinto
               aleatorio
     """
-    visitadas=[]
-    laberinto=Mapa(filas,columnas)
-    impares=[]
-    for i in range(1,laberinto.dimension()[0],2):
+    visitadas = []
+    laberinto = Mapa(filas, columnas)
+    impares = []
+    camino = Pila()
+    for i in range(1, laberinto.dimension()[0],2):
     	for j in range(1,laberinto.dimension()[1],2):
-    		impares.append((i,j))
-    i,j=laberinto.origen
+    		impares.append(Coord(i, j))
+    actual = laberinto.origen()
     print(impares)
-    visitadas.append((i,j))
-    laberinto.desbloquear(laberinto.origen)
-    while not mismos_elementos(visitadas,impares):
-    	df=randrange(-2,3,2)
-    	dc=randrange(-2,3,2)
-    	if laberinto.es_coord_valida((i+df,j+dc)) and (i+df,j+dc) not in visitadas:
-    		celda_del_medio=obtener_celda_del_medio(i,j,df,dc)
-    		i+=df
-    		j+=dc
-    		print(i,j)
-    		print(celda_del_medio)
-    		laberinto.desbloquear((i,j))
-    		laberinto.desbloquear(celda_del_medio)
-    		visitadas.append((i,j))
+    visitadas.append(actual)
+    laberinto.desbloquear(actual)
 
-    return laberinto 		
+    while not mismos_elementos(visitadas, impares):
+        vecinos = obtener_vecinos_impares(actual, laberinto)
+        vecinos_no_visitados = filtrar_no_visitados(vecinos, visitadas)
+        if len(vecinos_no_visitados) > 1:
+            camino.apilar(actual)
+        if vecinos_no_visitados:
+            vecino = choice(vecinos_no_visitados)
+            celda_del_medio = obtener_celda_del_medio(actual, vecino)
+            actual = vecino
+            print(actual)
+            print(celda_del_medio)
+            laberinto.desbloquear(actual)
+            laberinto.desbloquear(celda_del_medio)
+            visitadas.append(actual)
+        else:
+            while not camino.esta_vacia():
+                candidata_a_nueva = camino.desapilar()
+                if len(filtrar_no_visitados(obtener_vecinos_impares(candidata_a_nueva, laberinto), visitadas)) > 0:
+                    actual = candidata_a_nueva
+                    break
+    return laberinto
 
+def obtener_vecinos_impares(actual, mapa):
+    '''
+    Dada una coordenada en el mapa y el mapa, devuelve una lista
+    con las coordenadas de los vecinos (considerando los que estan a dos celdas
+    de distancia).
+    '''
+    vecinos = []
+    movimientos_posibles = ((2, 0), (0, 2), (-2, 0), (0, -2))
+    if actual == mapa.destino():
+        return vecinos
+    for movimiento in movimientos_posibles:
+        df, dc = movimiento
+        posible_vecino = actual.trasladar(df, dc)
+        if mapa.es_coord_valida(posible_vecino):
+            vecinos.append(posible_vecino)
+    return vecinos
 
+def filtrar_no_visitados(vecinos, visitadas):
+    vecinos_no_visitados = []
+    for vecino in vecinos:
+        if vecino not in visitadas:
+            vecinos_no_visitados.append(vecino)
+    return vecinos_no_visitados
 
-
-
-def mismos_elementos(visitadas,impares):
+def mismos_elementos(visitadas, impares):
 	'''Verifica si y se visitaron todas las celdas impares'''
 	for celda in impares:
 		if celda not in visitadas:
 			return False
-	return True		
-    				
-def obtener_celda_del_medio(i,j,df,dc):
-	'''Halla la posicion entre dos celdas impares'''
-	aux={2:1,0:0,-2:-1}
-	i+=aux[df]
-	j+=aux[dc]
-	return i,j
-			
+	return True
+
+def obtener_celda_del_medio_vieja(i, j, df, dc):
+    '''Halla la posicion entre dos celdas impares''' # la reescribí porque me parecía más clara así (sin pasar por el diccionario). Igual al final la termine reemplazando por una nueva (la dejo por si queremos volver a esta)
+    i += int(df/2)
+    j += int(dc/2)
+    return i, j
+
+def obtener_celda_del_medio(actual, vecino):
+    '''Halla la posicion entre dos celdas impares'''
+    return Coord(int((actual.fila + vecino.fila)/2), int((actual.columna + vecino.columna)/2))
+
+def imprimir(laberinto):
+    '''Imprime el laberinto en la terminal'''
+    f, c = laberinto.dimension()
+    for i in range(f):
+        fin = ''
+        for j in range(c):
+            if j == c - 1:
+                fin = None
+            if laberinto.celda_bloqueada(Coord(i, j)):
+                print(chr(9608), end = fin) # 9632 es el cuadrado
+            else:
+                print(' ', end = fin)
