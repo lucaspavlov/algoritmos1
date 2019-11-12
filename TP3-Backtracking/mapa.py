@@ -7,14 +7,12 @@ class Coord:
     Las instancias de Coord son inmutables.
     """
 
-    def __init__(self, fila=0, columna=0):
+    def __init__(self, fila = 0, columna = 0):
         """Constructor.
 
         Argumentos:
             fila, columna (int): Coordenadas de la celda
         """
-        if not isinstance(fila, int) or not isinstance(columna, int): # esto te parece que esta bien? (levantar el error). Si lo hacemos deberiamos hacerlo en los otros métodos también.
-            raise TypeError('Las coordenadas deben ser enteros.')
         self.fila = fila
         self.columna = columna
 
@@ -91,11 +89,9 @@ class Mapa:
         Argumentos:
             filas, columnas (int): Tamaño del mapa
         """
-        self._origen = [1, 1]
-        self._destino = [filas-1, columnas-1]
-        self.mapa = [[False for x in range(columnas)] for x in range(filas)]
-        # puse True pero podria ser 1... puse True porque se supone que
-        # se deberia poder representar con un booleano (False serian las paredes)
+        self._origen = [0, 0]
+        self._destino = [filas - 1, columnas - 1]
+        self.mapa = [[True for x in range(columnas)] for x in range(filas)]
 
     def dimension(self):
         """Dimensiones del mapa (filas y columnas).
@@ -210,7 +206,7 @@ class Mapa:
             Coord: La coordenada trasladada si queda dentro del mapa. En caso
                    contrario, devuelve la coordenada recibida.
         """
-        trasladada = coord.trasladar(df, dc) # en realidad trasladar es un metodo de la clase Coord. No estoy seguro de si se puede usar en este contexto.
+        trasladada = coord.trasladar(df, dc)
         if self.es_coord_valida(trasladada):
             return trasladada
         return coord
@@ -241,11 +237,9 @@ class _IteradorMapa:
             raise StopIteration()
         if self.primera:
             self.primera = False
-            return self.coord
-        if self.coord[1] < self.ultima_columna:
-            self.coord[1]+=1
-            return self.coord
-        if self.coord[0] < self.ultima_fila:
-            self.coord[0]+=1
-            self.coord[1]=0
-            return self.coord
+        elif self.coord[1] < self.ultima_columna:
+            self.coord[1] += 1
+        elif self.coord[0] < self.ultima_fila:
+            self.coord[0] += 1
+            self.coord[1] = 0
+        return Coord(self.coord[0], self.coord[1])

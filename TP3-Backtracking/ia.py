@@ -1,5 +1,6 @@
 from pila import Pila
-from mapa2 import Mapa,Coord
+from mapa import Mapa, Coord
+from random import shuffle
 
 class IA:
     """
@@ -28,7 +29,7 @@ class IA:
         self.mapa = mapa
         self.posicion = mapa.origen()
         self._visitados = [mapa.origen()]
-        self.camino=Pila()
+        self._camino = Pila()
 
     def coord_jugador(self):
         """Coordenadas del "jugador".
@@ -91,7 +92,16 @@ class IA:
             lista devuelta (esto tal vez permite simplificar la
             implementación).
         """
-        return self.camino
+        lista_camino = []
+        pila_aux = Pila()
+        while not self._camino.esta_vacia():
+            dato = self._camino.desapilar()
+            lista_camino.append(dato)
+            pila_aux.apilar(dato)
+        while not pila_aux.esta_vacia():
+            self._camino.apilar(pila_aux.desapilar())        
+        
+        return lista_camino
 
     def avanzar(self):
         """Avanza un paso en la simulación.
@@ -99,22 +109,23 @@ class IA:
         Si el jugador no está en la celda destino, y hay algún movimiento
         posible hacia una celda no visitada, se efectúa ese movimiento.
         """
-        if self.posicion==self.mapa.destino():
+        if self.posicion == self.mapa.destino():
             return
-        movimientos_posibles = ((1, 0), (0, 1), (-1, 0), (0, -1))
-        anterior=self.posicion
-        for movimiento in movimientos_posibles: # de esta forma no es aleatorio porque siempre intenta primero con el (1, 0), etc.
+        movimientos_posibles = [(1, 0), (0, 1), (-1, 0), (0, -1)]
+        shuffle(movimientos_posibles)
+        anterior = self.posicion
+        for movimiento in movimientos_posibles:
             df, dc = movimiento
             candidato = self.posicion.trasladar(df, dc)
             if candidato not in self.visitados() and self.mapa.es_coord_valida(candidato) and not self.mapa.celda_bloqueada(candidato):
                 self.posicion = candidato
-                self._visitados.append(candidato) #Si ya no esta en self.visitados lo preguntabas dos veces
-                self.camino.apilar(candidato)
-        if self.posicion==anterior:
-            self.camino.desapilar()
-            candidato=self.camino.desapilar()
-            self.camino.apilar(candidato)
-            self.posicion=candidato
+                self._visitados.append(candidato)
+                self._camino.apilar(candidato)
+        if self.posicion == anterior:
+            self._camino.desapilar()
+            candidato = self._camino.desapilar()
+            self._camino.apilar(candidato)
+            self.posicion = candidato
 
                     
 
