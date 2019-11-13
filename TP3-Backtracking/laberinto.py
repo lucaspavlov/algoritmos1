@@ -51,14 +51,14 @@ def generar_laberinto(filas, columnas):
 
 def todas_las_impares(mapa):
     '''
-    Dado un mapa, devuelve una lista de coordenadas que contiene
+    Dado un mapa, devuelve una tupla de coordenadas que contiene
     a todas las coordenadas impares.
     '''
     impares = []
     for i in range(1, mapa.dimension()[0],2):
     	for j in range(1, mapa.dimension()[1],2):
     		impares.append(Coord(i, j))
-    return impares
+    return tuple(impares)
 
 def vecinos_misma_paridad(actual, mapa):
     '''
