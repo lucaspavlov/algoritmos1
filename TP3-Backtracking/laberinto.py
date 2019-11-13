@@ -17,23 +17,23 @@ def generar_laberinto(filas, columnas):
 
     laberinto.asignar_origen(Coord(1, 1))
     laberinto.asignar_destino(Coord(filas - 1 - filas % 2, columnas - 1 - columnas % 2))
-    
+
     for coord in laberinto:
         laberinto.bloquear(coord)
 
     impares = todas_las_impares(laberinto)
-    
+
     visitadas = []
     actual = laberinto.origen()
     visitadas.append(actual)
     laberinto.desbloquear(actual)
-    
+
     posibles_candidatos = Pila()
 
-    while not mismos_elementos(visitadas, impares):
+    while not todos_contenidos(visitadas, impares):
         vecinos = vecinos_misma_paridad(actual, laberinto)
         vecinos_no_visitados = no_visitadas(vecinos, visitadas)
-        if vecinos_no_visitados:
+        if vecinos_no_visitados and actual != laberinto.destino():
             posibles_candidatos.apilar(actual)
             vecino = choice(vecinos_no_visitados)
             celda_del_medio = obtener_celda_del_medio(actual, vecino)
@@ -62,7 +62,7 @@ def todas_las_impares(mapa):
 
 def vecinos_misma_paridad(actual, mapa):
     '''
-    Dada una coordenada en el mapa y el mapa, devuelve una lista
+    Dada una coordenada en el mapa y el mapa, devuelve una tupla
     con las coordenadas de los vecinos que están a dos celdas
     de distancia (de manera tal de conservar la paridad, es decir,
     si la coordenada es impar da los vecinos impares y si es par
@@ -70,34 +70,37 @@ def vecinos_misma_paridad(actual, mapa):
     '''
     vecinos = []
     movimientos_posibles = ((2, 0), (0, 2), (-2, 0), (0, -2))
-    if actual == mapa.destino():
-        return vecinos
     for movimiento in movimientos_posibles:
         df, dc = movimiento
         posible_vecino = actual.trasladar(df, dc)
         if mapa.es_coord_valida(posible_vecino):
             vecinos.append(posible_vecino)
-    return vecinos
+    return tuple(vecinos)
 
-def no_visitadas(vecinos, visitadas):
+def no_visitadas(coordenadas, visitadas):
     '''
-    Recibe una lista de coordenas vecinas y una lista de coordenas vistadas
-    y devuelve una lista con las coordenadas vecinas no visitadas.
+    Recibe una tupla de coordenadas y una lista de coordenadas visitadas
+    y devuelve una tupla con las coordenadas no visitadas.
     '''
-    vecinos_no_visitados = []
-    for vecino in vecinos:
-        if vecino not in visitadas:
-            vecinos_no_visitados.append(vecino)
-    return vecinos_no_visitados
+    coord_no_visitadas = []
+    for coord in coordenadas:
+        if coord not in visitadas:
+            coord_no_visitadas.append(coord)
+    return tuple(coord_no_visitadas)
 
-def mismos_elementos(visitadas, impares):
-    '''Verifica si ya se visitaron todas las celdas impares'''
-    for celda in impares:
-        if celda not in visitadas:
+def todos_contenidos(s1, s2):
+    '''
+    Recibe dos secuencias y devuelve True si todos los elementos
+    de la segunda están en la primera o False en caso contrario.
+    '''
+    for elemento in s2:
+        if elemento not in s1:
             return False
     return True
 
-def obtener_celda_del_medio(actual, vecino):
-    '''Halla la posicion entre dos celdas impares'''
-    return Coord(int((actual.fila + vecino.fila)/2), int((actual.columna + vecino.columna)/2))
-
+def obtener_celda_del_medio(celda_1, celda_2):
+    '''
+    Recibe las coordenadas de dos celdas separadas en dos unidades y
+    devuelve las coordenadas de la celda ubicada entre esas dos.
+    '''
+    return Coord(int((celda_1.fila + celda_2.fila)/2), int((celda_1.columna + celda_2.columna)/2))
