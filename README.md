@@ -1,1 +1,1 @@
-# algoritmos1
+Ejercicios y TPs hechos durante la cursada de la materia Algoritmos y Programación 1, cátedra Essaya. Es la primera materia de programación para los alumnos de ingeniería informática en la Facultad de Ingeniería de la Universidad de Buenos Aires. Yo la cursé mientras hacía mi Doctorado, durante el segundo cuatrimestre de 2019.
